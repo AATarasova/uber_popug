@@ -17,11 +17,15 @@ public class TemplateRepository : ITemplateRepository
     public async Task<Template> GetById(TemplateId id)
     {
         var dbTemplate = await _dbContext.Templates.FirstAsync(t => t.Id == id.Value);
-        return new Template
-        {
-            Id = id,
-            Title = dbTemplate.Title
-        };
+        return Convert(dbTemplate);
+    }
+
+    public async Task<IReadOnlyCollection<Template>> ListAll()
+    {
+        var templates = _dbContext.Templates
+            .Select(Convert)
+            .ToList();
+        return await Task.FromResult(templates);
     }
 
     public async Task Create(Template template)
@@ -33,4 +37,10 @@ public class TemplateRepository : ITemplateRepository
         };
         await _dbContext.AddAsync(dbTemplate);
     }
+
+    private Template Convert(DbTemplate t) => new()
+    {
+        Id = new TemplateId(t.Id),
+        Title = t.Title
+    };
 }
