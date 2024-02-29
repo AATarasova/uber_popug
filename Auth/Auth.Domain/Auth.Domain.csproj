@@ -17,6 +17,5 @@
     <ItemGroup>
         <InternalsVisibleTo Include="Auth.DAL" />
     </ItemGroup>
-
-
+    
 </Project>

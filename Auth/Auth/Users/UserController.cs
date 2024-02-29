@@ -27,4 +27,10 @@ public class UserController : ControllerBase
     {
         await _mediator.Send(new CreateUserData.Command(args));
     }
+
+    [HttpPost("{userId:int}")]
+    public async Task UpdateRole(int userId, [FromBody] UpdateRole.Args args)
+    {
+        await _mediator.Send(new UpdateRole.Command(userId, args));
+    }
 }

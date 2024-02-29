@@ -26,11 +26,12 @@ public sealed class AuthDbContext : DbContext
             entity.HasKey(e => e.UserId);
             entity.Property(e => e.UserId).ValueGeneratedOnAdd().UseIdentityAlwaysColumn();
             entity.Property(e => e.PublicId).Metadata.SetValueGeneratorFactory((_, _) => new SequentialGuidValueGenerator());;
-            entity.Property(e => e.Email).HasMaxLength(50).IsUnicode(false);
-            entity.Property(e => e.Password).HasMaxLength(20).IsUnicode(false);
-            entity.Property(e => e.LastName).HasMaxLength(20).IsUnicode(false);
-            entity.Property(e => e.FirstName).HasMaxLength(20).IsUnicode(false);
+            entity.Property(e => e.Email).HasMaxLength(50).IsUnicode(false).IsRequired();
+            entity.Property(e => e.Password).HasMaxLength(20).IsUnicode(false).IsRequired();
+            entity.Property(e => e.LastName).HasMaxLength(20).IsUnicode(false).IsRequired();
+            entity.Property(e => e.FirstName).HasMaxLength(20).IsUnicode(false).IsRequired();
             entity.Property(e => e.MiddleName).HasMaxLength(20).IsUnicode(false);
+            entity.Property(e => e.Role).IsRequired();
         });
     }
 }   

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -21,7 +21,8 @@ namespace Auth.DAL.Migrations
                     FirstName = table.Column<string>(type: "character varying(20)", unicode: false, maxLength: 20, nullable: false),
                     MiddleName = table.Column<string>(type: "character varying(20)", unicode: false, maxLength: 20, nullable: true),
                     Email = table.Column<string>(type: "character varying(50)", unicode: false, maxLength: 50, nullable: false),
-                    Password = table.Column<string>(type: "character varying(20)", unicode: false, maxLength: 20, nullable: false)
+                    Password = table.Column<string>(type: "character varying(20)", unicode: false, maxLength: 20, nullable: false),
+                    Role = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {

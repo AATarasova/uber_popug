@@ -53,8 +53,7 @@ public static class Authenticate
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)),
                 new Claim("UserId", user.PublicId.ToString()),
-                new Claim("UserName", user.UserName.LastNameAndInitials),
-                new Claim("Email", user.Email)
+                new Claim("Role", user.Role.ToString()),
             };
 
             var securityKey  = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
