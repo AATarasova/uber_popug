@@ -39,6 +39,7 @@ public class UserRepository : IUserRepository, ICredentialsService, IRolesManage
             LastName = user.LastName,
             FirstName = user.FirstName,
             MiddleName = user.MiddleName,
+            Role = user.Role    
         };
         await _dbContext.AddAsync(entity);
         await _dbContext.SaveChangesAsync();

@@ -1,8 +1,12 @@
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using EventsManager.Domain;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
+using TaskTracker.Consumer.UserCreated;
 using TaskTracker.DAL;
 using TaskTracker.DAL.Context;
 using TaskTracker.Domain;
@@ -11,9 +15,14 @@ namespace TaskTracker;
 
 public class Startup
 {
-    public void ConfigureServices(IServiceCollection serviceCollection)
+    public void ConfigureServices(IServiceCollection serviceCollection, IConfiguration configuration)
     {
-        serviceCollection.AddControllers();
+        serviceCollection.AddControllers().AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            options.JsonSerializerOptions.PropertyNamingPolicy=JsonNamingPolicy.CamelCase;
+        });
+
         
         serviceCollection.AddEndpointsApiExplorer();
         var assembly = typeof(Startup).GetTypeInfo().Assembly;
@@ -26,8 +35,9 @@ public class Startup
         serviceCollection.AddDbContext<TaskTrackerDbContext>();
         serviceCollection.RegisterDomain();
         serviceCollection.RegisterDAL();
+        serviceCollection.RegisterEventsDomain(configuration);
         
-        
+        serviceCollection.AddHostedService<UserCreatedConsumer>();
     }
 
     public void ConfigureAuth(IServiceCollection serviceCollection, ConfigurationManager configuration)
