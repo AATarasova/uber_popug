@@ -1,18 +1,26 @@
+using System.ComponentModel;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Auth.DAL;
 using Auth.DAL.Context;
+using Auth.Domain;
+using EventManager.Domain;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
-
 namespace Auth;
 
 public class Startup
 {
-    public void ConfigureServices(IServiceCollection serviceCollection)
+    public void ConfigureServices(IServiceCollection serviceCollection, IConfiguration builderConfiguration)
     {
-        serviceCollection.AddControllers();
+        serviceCollection.AddControllers().AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            options.JsonSerializerOptions.PropertyNamingPolicy=JsonNamingPolicy.CamelCase;
+        });
         
         serviceCollection.AddEndpointsApiExplorer();
         var assembly = typeof(Startup).GetTypeInfo().Assembly;
@@ -21,11 +29,11 @@ public class Startup
         {
             options.CustomSchemaIds(type => type.FullName?.Replace('+','.'));
         });
-        
+    
         serviceCollection.AddDbContext<AuthDbContext>();
         serviceCollection.RegisterAuthDAL();
-        
-        
+        serviceCollection.RegisterAuthDomain();
+        serviceCollection.RegisterEventsDomain(builderConfiguration);
     }
 
     public void ConfigureAuth(IServiceCollection serviceCollection, ConfigurationManager configuration)

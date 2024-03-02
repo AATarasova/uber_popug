@@ -21,18 +21,11 @@ public static class ListUserData
         public string Role { get; set; } = null!;
     }
     
-    public class Handler : IRequestHandler<Query, Response>
+    public class Handler(IUserRepository userRepository) : IRequestHandler<Query, Response>
     {
-        private readonly IUserRepository _userRepository;
-
-        public Handler(IUserRepository userRepository)
-        {
-            _userRepository = userRepository;
-        }
-
         public async Task<Response> Handle(Query query, CancellationToken cancellationToken)
         {
-            var templates = await _userRepository.ListAll();
+            var templates = await userRepository.ListAll();
 
             var dtos = templates.Select(t => new User
             {

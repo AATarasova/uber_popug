@@ -12,18 +12,11 @@ public static class UpdateRole
     [PublicAPI]
     public record Args(Role Role);
     
-    public class Handler: IRequestHandler<Command>
+    public class Handler(IRolesManager rolesManager) : IRequestHandler<Command>
     {
-        private readonly IRolesManager _rolesManager;
-
-        public Handler(IRolesManager rolesManager)
-        {
-            _rolesManager = rolesManager;
-        }
-
         public async Task Handle(Command request, CancellationToken cancellationToken)
         {
-            await _rolesManager.ChangeRole(new UserId(request.UserId), request.Args.Role);
+            await rolesManager.ChangeRole(new UserId(request.UserId), request.Args.Role);
         }
     }
 }

@@ -6,6 +6,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auth.DAL", "Auth.DAL\Auth.D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auth.Domain", "Auth.Domain\Auth.Domain.csproj", "{9072EB0E-D73D-454F-BC7E-3765280E790A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventManager.Domain", "EventManager.Domain\EventManager.Domain.csproj", "{CF708606-A760-4C46-8D95-E5CF35693A12}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E5D9F63E-0213-4D4D-9521-669F1EAFBD16}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +31,9 @@ Global
 		{9072EB0E-D73D-454F-BC7E-3765280E790A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9072EB0E-D73D-454F-BC7E-3765280E790A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9072EB0E-D73D-454F-BC7E-3765280E790A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF708606-A760-4C46-8D95-E5CF35693A12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF708606-A760-4C46-8D95-E5CF35693A12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF708606-A760-4C46-8D95-E5CF35693A12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF708606-A760-4C46-8D95-E5CF35693A12}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

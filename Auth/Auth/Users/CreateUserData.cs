@@ -1,4 +1,7 @@
+using Auth.Domain.Roles;
 using Auth.Domain.Users;
+using Auth.Domain.Users.Management;
+using EventManager.Domain.Producer;
 using JetBrains.Annotations;
 using MediatR;
 
@@ -16,17 +19,11 @@ public static class CreateUserData
         public string LastName { get; init; } = null!;
         public string FirstName { get; init; } = null!;
         public string MiddleName { get; init; } = null!;
+        public Role Role { get; init; }
     }
     
-    public class Handler: IRequestHandler<Command>
+    public class Handler(IUserManager userManager, IEventProducer producer) : IRequestHandler<Command>
     {
-        private readonly IUserRepository _userRepository;
-
-        public Handler(IUserRepository userRepository)
-        {
-            _userRepository = userRepository;
-        }
-
         public async Task Handle(Command request, CancellationToken cancellationToken)
         {
             var template = new CreateUserDto
@@ -36,8 +33,9 @@ public static class CreateUserData
                 MiddleName = request.Args.MiddleName,
                 Email = request.Args.Email,
                 Password = request.Args.Password,
+                Role = request.Args.Role
             };
-            await _userRepository.Create(template);
+            await userManager.Create(template, producer);
         }
     }
 }

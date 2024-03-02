@@ -7,30 +7,23 @@ namespace Auth.Users;
 [Route("api/users")]
 [Authorize]
 [ApiController]
-public class UserController : ControllerBase
+public class UserController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-
-    public UserController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [HttpGet]
     public async Task<ListUserData.Response> ListAll()
     {
-        return await _mediator.Send(new ListUserData.Query());
+        return await mediator.Send(new ListUserData.Query());
     }
 
     [HttpPost]
     public async Task Add([FromBody] CreateUserData.Args args)
     {
-        await _mediator.Send(new CreateUserData.Command(args));
+        await mediator.Send(new CreateUserData.Command(args));
     }
 
     [HttpPost("{userId:int}")]
     public async Task UpdateRole(int userId, [FromBody] UpdateRole.Args args)
     {
-        await _mediator.Send(new UpdateRole.Command(userId, args));
+        await mediator.Send(new UpdateRole.Command(userId, args));
     }
 }

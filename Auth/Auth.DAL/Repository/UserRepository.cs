@@ -30,9 +30,9 @@ public class UserRepository : IUserRepository, ICredentialsService, IRolesManage
         return await Task.FromResult(templates);
     }
 
-    public async Task Create(CreateUserDto user)
+    public async Task<UserId> Create(CreateUserDto user)
     {
-        var dbTemplate = new DbUser
+        var entity = new DbUser
         {
             Email = user.Email.ToLower(),
             Password = user.Password,
@@ -40,8 +40,10 @@ public class UserRepository : IUserRepository, ICredentialsService, IRolesManage
             FirstName = user.FirstName,
             MiddleName = user.MiddleName,
         };
-        await _dbContext.AddAsync(dbTemplate);
+        await _dbContext.AddAsync(entity);
         await _dbContext.SaveChangesAsync();
+
+        return new UserId(entity.UserId);
     }
 
     private User Convert(DbUser t) => new()
