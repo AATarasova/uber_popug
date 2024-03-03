@@ -1,7 +1,6 @@
 using System.Text;
 using System.Text.Json;
 using Confluent.Kafka;
-using Microsoft.Extensions.Configuration;
 
 namespace EventManager.Domain.Producer;
 

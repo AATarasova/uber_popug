@@ -1,10 +1,11 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace TaskTracker.Tasks;
 
 [Route("api/tasks")]
-// [Authorize]
+[Authorize]
 [ApiController]
 public class TasksController(ISender mediator) : ControllerBase
 {

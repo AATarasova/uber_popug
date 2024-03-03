@@ -11,19 +11,22 @@ public class UserCreatedConsumer(IServiceScopeFactory serviceScopeFactory, ILogg
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        while (!stoppingToken.IsCancellationRequested)
-        {
-            logger.LogInformation("UserCreatedConsumer running at: {time}", DateTimeOffset.Now);
-            using (var scope = serviceScopeFactory.CreateScope())
-            {
-                var eventConsumer =
-                    scope.ServiceProvider.GetRequiredService<IEventConsumer>();
-                await eventConsumer.SubscribeTopic<UserCreatedEvent>("create_employees", HandleCreatedEvent);
-            }
-            logger.LogInformation("UserCreatedConsumer stopped at: {time}", DateTimeOffset.Now);
-        }
+        new Thread(async () => await Start(stoppingToken)).Start();
     }
 
+    private async Task Start(CancellationToken cancellationToken)
+    {
+        Thread.CurrentThread.IsBackground = true;
+        logger.LogInformation("UserCreatedConsumer running at: {time}", DateTimeOffset.Now);
+        using (var scope = serviceScopeFactory.CreateScope())
+        {
+            var eventConsumer = scope.ServiceProvider.GetRequiredService<IEventConsumer>();
+            await eventConsumer.SubscribeTopic<UserCreatedEvent>("create_employees", HandleCreatedEvent, cancellationToken);
+        }
+
+        logger.LogInformation("UserCreatedConsumer stopped at: {time}", DateTimeOffset.Now);
+    }
+    
     private async Task HandleCreatedEvent(UserCreatedEvent userCreatedEvent)
     {
         if (userCreatedEvent.Role != Role.Developer)
@@ -31,18 +34,14 @@ public class UserCreatedConsumer(IServiceScopeFactory serviceScopeFactory, ILogg
             return;
         }
 
-        using (var scope = serviceScopeFactory.CreateScope())
+        using var scope = serviceScopeFactory.CreateScope();
+        var manager = scope.ServiceProvider.GetRequiredService<IEmployeesManager>();      
+        var createDeveloperDto = new Employee()
         {
-            var manager = scope.ServiceProvider.GetRequiredService<IEmployeesManager>();      
-            var createDeveloperDto = new Employee()
-            {
-                Id = new EmployeeId(userCreatedEvent.Id),
-                Role = userCreatedEvent.Role
-            };
+            Id = new EmployeeId(userCreatedEvent.Id),
+            Role = userCreatedEvent.Role
+        };
         
-            await manager.Create(createDeveloperDto);
-        }
-        
-
+        await manager.Create(createDeveloperDto);
     }
 }

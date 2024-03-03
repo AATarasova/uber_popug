@@ -19,11 +19,11 @@ public class EventConsumer : IEventConsumer
         _consumer = new ConsumerBuilder<Guid, string>(consumerConfig).SetKeyDeserializer(new GuidSerializer()).Build();
     }
 
-    public async Task SubscribeTopic<T>(string topic, Func<T, Task> messageHandler)
+    public async Task SubscribeTopic<T>(string topic, Func<T, Task> messageHandler, CancellationToken cancellationToken)
     {
         _consumer.Subscribe(topic);
 
-        while (true)
+        while (!cancellationToken.IsCancellationRequested)
         {
             try
             {
@@ -37,7 +37,7 @@ public class EventConsumer : IEventConsumer
                 Console.WriteLine($"Error processing Kafka message: {ex.Message}");
             }
             
-            await Task.Delay(TimeSpan.FromMinutes(1));
+            await Task.Delay(TimeSpan.FromMinutes(1), cancellationToken);
         }
 
         _consumer.Close();
