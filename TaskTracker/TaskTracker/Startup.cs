@@ -6,7 +6,7 @@ using EventsManager.Domain;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
-using TaskTracker.Consumer.UserCreated;
+using TaskTracker.Consumer.Users;
 using TaskTracker.DAL;
 using TaskTracker.DAL.Context;
 using TaskTracker.Domain;
@@ -37,7 +37,7 @@ public class Startup
         serviceCollection.RegisterDAL();
         serviceCollection.RegisterEventsDomain(configuration);
         
-        serviceCollection.AddHostedService<UserCreatedConsumer>();
+        serviceCollection.AddHostedService<UserEventsConsumer>();
     }
 
     public void ConfigureAuth(IServiceCollection serviceCollection, ConfigurationManager configuration)

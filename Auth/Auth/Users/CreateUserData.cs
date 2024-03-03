@@ -22,7 +22,7 @@ public static class CreateUserData
         public Role Role { get; init; }
     }
     
-    public class Handler(IUserManager userManager, IEventProducer producer) : IRequestHandler<Command>
+    public class Handler(IUserManager userManager) : IRequestHandler<Command>
     {
         public async Task Handle(Command request, CancellationToken cancellationToken)
         {
@@ -35,7 +35,7 @@ public static class CreateUserData
                 Password = request.Args.Password,
                 Role = request.Args.Role
             };
-            await userManager.Create(template, producer);
+            await userManager.Create(template);
         }
     }
 }

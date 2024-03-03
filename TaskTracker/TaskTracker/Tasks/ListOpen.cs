@@ -19,6 +19,7 @@ public static class ListOpen
         public Guid PublicId { get; set; }
         public string Description { get; set; } = null!;
         public string CreatedDate { get; set; } = null!;
+        public Guid Developer { get; set; }
     }
     
     public class Handler(ITasksManager tasksManager) : IRequestHandler<Query, Response>
@@ -32,7 +33,8 @@ public static class ListOpen
                 Id = t.Id.Value,
                 PublicId = t.PublicId,
                 Description = t.Description,
-                CreatedDate = t.CreatedDate.ToShortDateString()
+                CreatedDate = t.CreatedDate.ToShortDateString(),
+                Developer = t.DeveloperId.Value
             });
             return new Response(dtos);
         }

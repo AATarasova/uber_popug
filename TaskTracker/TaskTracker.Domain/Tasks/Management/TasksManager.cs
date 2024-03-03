@@ -49,13 +49,22 @@ internal class TasksManager : ITasksManager
         var developers = (await _employeesManager.ListAllDevelopers()).ToImmutableArray();
         foreach (var task in openTasks)
         {
-            task.DeveloperId = await GetDeveloperForTask(developers);
         }
+        
+        await _repository.Update(openTasks.Select(t => new TaskManagementDto()
+        {
+            DeveloperId = GetDeveloperForTask(developers)
+        }).ToArray());
     }
 
-    private async Task<EmployeeId> GetDeveloperForTask(IReadOnlyList<EmployeeId>? developers = null)
+    private EmployeeId GetDeveloperForTask(IReadOnlyList<EmployeeId> developers)
     {
-        developers ??= (await _employeesManager.ListAllDevelopers()).ToImmutableArray();
         return developers[_rnd.Next(developers.Count)];
+    }
+
+    private async Task<EmployeeId> GetDeveloperForTask()
+    {
+        var developers = (await _employeesManager.ListAllDevelopers()).ToImmutableArray();
+        return developers[_rnd.Next(developers.Count())];
     }
 }

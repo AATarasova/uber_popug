@@ -1,5 +1,6 @@
 using Auth.Domain.Roles;
 using Auth.Domain.Users;
+using Auth.Domain.Users.Management;
 using JetBrains.Annotations;
 using MediatR;
 
@@ -12,11 +13,11 @@ public static class UpdateRole
     [PublicAPI]
     public record Args(Role Role);
     
-    public class Handler(IRolesManager rolesManager) : IRequestHandler<Command>
+    public class Handler(IUserManager manager) : IRequestHandler<Command>
     {
         public async Task Handle(Command request, CancellationToken cancellationToken)
         {
-            await rolesManager.ChangeRole(new UserId(request.UserId), request.Args.Role);
+            await manager.UpdateRole(new UserId(request.UserId), request.Args.Role);
         }
     }
 }

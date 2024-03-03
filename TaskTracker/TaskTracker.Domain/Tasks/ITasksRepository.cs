@@ -8,4 +8,5 @@ internal interface ITasksRepository
     Task<IReadOnlyCollection<TaskDto>> ListByFinishDate(DateTime dateTime);
     Task Create(CreateTaskDto createTask);
     Task Update(TaskManagementDto taskInfo);
+    Task Update(IReadOnlyCollection<TaskManagementDto> taskInfo);
 }

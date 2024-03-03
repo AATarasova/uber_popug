@@ -7,24 +7,17 @@ using DbUser = Auth.Domain.Models.User;
 
 namespace Auth.DAL.Repository;
 
-public class UserRepository : IUserRepository, ICredentialsService, IRolesManager
+public class UserRepository(AuthDbContext dbContext) : IUserRepository, ICredentialsService, IRolesManager
 {
-    private readonly AuthDbContext _dbContext;
-            
-    public UserRepository(AuthDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-    
     public async Task<User> GetById(UserId id)
     {
-        var dbTemplate = await _dbContext.Users.FirstAsync(t => t.UserId == id.Value);
+        var dbTemplate = await dbContext.Users.FirstAsync(t => t.UserId == id.Value);
         return Convert(dbTemplate);
     }
 
     public async Task<IReadOnlyCollection<User>> ListAll()
     {
-        var templates = _dbContext.Users
+        var templates = dbContext.Users
             .Select(Convert)
             .ToList();
         return await Task.FromResult(templates);
@@ -41,8 +34,8 @@ public class UserRepository : IUserRepository, ICredentialsService, IRolesManage
             MiddleName = user.MiddleName,
             Role = user.Role    
         };
-        await _dbContext.AddAsync(entity);
-        await _dbContext.SaveChangesAsync();
+        await dbContext.AddAsync(entity);
+        await dbContext.SaveChangesAsync();
 
         return new UserId(entity.UserId);
     }
@@ -53,22 +46,23 @@ public class UserRepository : IUserRepository, ICredentialsService, IRolesManage
         PublicId = t.PublicId,
         Email = t.Email,
         Password = t.Password,
-        UserName = new UserName(t.LastName, t.FirstName, t.MiddleName)
+        UserName = new UserName(t.LastName, t.FirstName, t.MiddleName),
+        Role = t.Role
     };
 
     public async Task<UserId?> FindUser(string email, string password)
     {
-        var user =  await _dbContext.Users.FirstOrDefaultAsync(t =>
+        var user =  await dbContext.Users.FirstOrDefaultAsync(t =>
             t.Email == email.ToLower() && t.Password == password);
         return user is null ? null : new UserId(user.UserId);
     }
 
     public async Task ChangeRole(UserId userId, Role newRole)
     {
-        var user = await _dbContext.Users.FirstAsync(t => t.UserId == userId.Value);
+        var user = await dbContext.Users.FirstAsync(t => t.UserId == userId.Value);
         user.Role = newRole;
-        _dbContext.Update(user);
+        dbContext.Update(user);
         
-        await _dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync();
     }
 }

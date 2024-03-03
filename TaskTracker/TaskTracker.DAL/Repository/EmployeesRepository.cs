@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using TaskTracker.DAL.Context;
 using TaskTracker.Domain.Employees;
 using TaskTracker.Domain.Employees.Dto;
@@ -9,7 +10,7 @@ internal class EmployeesRepository(TaskTrackerDbContext dbContext) : IEmployeesM
 {
     public async Task Create(Employee employee)
     {
-        var dbEmployee = new DbEmployee()
+        var dbEmployee = new DbEmployee
         {
             Id = employee.Id.Value,
             Role = employee.Role
@@ -19,11 +20,31 @@ internal class EmployeesRepository(TaskTrackerDbContext dbContext) : IEmployeesM
         await dbContext.SaveChangesAsync();
     }
 
+    public async Task Update(EmployeeId employee, Role role)
+    {
+        var entity = await dbContext.Employees.FirstAsync(e => e.Id == employee.Value);
+        entity.Role = role;
+        await dbContext.SaveChangesAsync();
+    }
+
+    public async Task Delete(EmployeeId employee)
+    {
+        var dev = await dbContext.Employees.FirstAsync(e => e.Id == employee.Value);
+        dbContext.Employees.Remove(dev);
+    }
+
     public async Task<IReadOnlyCollection<EmployeeId>> ListAllDevelopers()
     {
         var developers = dbContext.Employees
             .Where(e => e.Role == Role.Developer)
             .AsEnumerable()
+            .Select(Convert)
+            .ToList();
+        return await Task.FromResult(developers);
+    }
+
+    public async Task<IReadOnlyCollection<EmployeeId>> ListAll()
+    { var developers = dbContext.Employees
             .Select(Convert)
             .ToList();
         return await Task.FromResult(developers);

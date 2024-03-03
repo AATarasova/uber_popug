@@ -41,20 +41,35 @@ internal class TasksRepository(TaskTrackerDbContext dbContext) : ITasksRepositor
     public async Task Update(TaskManagementDto taskInfo)
     {
         var task = dbContext.Tasks.First(t => t.Id == taskInfo.Id.Value);
-        if (taskInfo.Description is not null)
+        SetFields(task, taskInfo);
+        await dbContext.SaveChangesAsync();
+    }
+
+    public async Task Update(IReadOnlyCollection<TaskManagementDto> updates)
+    {
+        var dict = updates.ToDictionary(u => u.Id.Value);
+        foreach (var task in dbContext.Tasks.Where(t => dict.ContainsKey(t.Id)))
+        {    
+            SetFields(task, dict[task.Id]);
+        }
+        await dbContext.SaveChangesAsync();
+    }
+
+    private void SetFields(DbTask task, TaskManagementDto updateDto)
+    {
+        if (updateDto.Description is not null)
         {
-            task.Description = taskInfo.Description;
+            task.Description = updateDto.Description;
         }
 
-        if (taskInfo.DeveloperId.HasValue)
+        if (updateDto.DeveloperId.HasValue)
         {
-            task.DeveloperId = taskInfo.DeveloperId.Value.Value;
+            task.DeveloperId = updateDto.DeveloperId.Value.Value;
         }
-        if (taskInfo.IsClosed.HasValue && taskInfo.IsClosed.Value)
+        if (updateDto.IsClosed.HasValue && updateDto.IsClosed.Value)
         {
             task.FinishedDate = DateTime.Now;
         }
-        await dbContext.SaveChangesAsync();
     }
 
     private TaskDto Convert(DbTask task) =>
