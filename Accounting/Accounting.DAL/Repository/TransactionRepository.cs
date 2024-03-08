@@ -22,7 +22,8 @@ public class TransactionRepository(AccountingDbContext dbContext) : ITransaction
 
     public async Task<IReadOnlyCollection<Transaction>> ListByDate(DateTime completedDate)
     {
-        var transactions =  await Task.FromResult(dbContext.Transactions.Where(t => t.TransactionDate == completedDate));
+        var transactions = await Task.FromResult(dbContext.Transactions.Where(t =>
+            t.TransactionDate.Date == completedDate.Date));
         return transactions.Select(t => new Transaction
             {
                 TargetAccountId = new AccountId(t.TargetAccountId),
