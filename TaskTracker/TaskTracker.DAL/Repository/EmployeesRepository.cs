@@ -20,7 +20,7 @@ internal class EmployeesRepository(TaskTrackerDbContext dbContext) : IEmployeesM
         await dbContext.SaveChangesAsync();
     }
 
-    public async Task Update(EmployeeId employee, Role role)
+    public async Task UpdateRole(EmployeeId employee, Role role)
     {
         var entity = await dbContext.Employees.FirstAsync(e => e.Id == employee.Value);
         entity.Role = role;

@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Confluent.Kafka;
 
 namespace EventsManager.Domain.Consumer;
@@ -6,9 +7,16 @@ namespace EventsManager.Domain.Consumer;
 public class EventConsumer : IEventConsumer
 {
     private readonly IConsumer<Guid, string> _consumer;
+    private readonly JsonSerializerOptions _serializerOptions;
 
     public EventConsumer(string url)
     {
+        _serializerOptions = new JsonSerializerOptions{
+            Converters ={
+                new JsonStringEnumConverter()
+            }
+        };
+        
         var consumerConfig = new ConsumerConfig
         {
             BootstrapServers = url,
@@ -29,7 +37,7 @@ public class EventConsumer : IEventConsumer
             {
                 var consumeResult = _consumer.Consume();
                 Console.WriteLine($"Received message with guid {consumeResult.Message.Key} and value {consumeResult.Message.Value}");
-                var parsed = JsonSerializer.Deserialize<T>(consumeResult.Message.Value) ?? throw new InvalidOperationException();
+                var parsed = JsonSerializer.Deserialize<T>(consumeResult.Message.Value, _serializerOptions) ?? throw new InvalidOperationException();
                 await messageHandler(parsed);
             }
             catch (Exception ex)

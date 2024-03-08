@@ -37,7 +37,7 @@ public class Startup
         serviceCollection.RegisterDAL();
         serviceCollection.RegisterEventsDomain(configuration);
         
-        serviceCollection.AddHostedService<UserEventsConsumer>();
+        serviceCollection.AddHostedService<EventsConsumer>();
     }
 
     public void ConfigureAuth(IServiceCollection serviceCollection, ConfigurationManager configuration)
