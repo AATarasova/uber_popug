@@ -1,5 +1,4 @@
 using System.Reflection;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using TemplateService.DAL;
 using TemplateService.DAL.Context;
 
