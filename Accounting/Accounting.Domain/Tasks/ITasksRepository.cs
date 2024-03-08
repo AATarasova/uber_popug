@@ -1,6 +1,6 @@
 namespace Accounting.Domain.Tasks;
 
-internal interface ITasksRepository
+public interface ITasksRepository
 {
     Task Add(TaskId taskId);
     Task<TaskDto> GetById(TaskId taskId);

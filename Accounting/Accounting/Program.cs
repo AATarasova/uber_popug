@@ -1,6 +1,4 @@
-using Accounting;
-
-namespace TaskTracker;
+namespace Accounting;
 
 public static class Program
 {
