@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using TaskTracker.DAL.Context;
 using TaskTracker.Domain.Tasks;
 using TaskTracker.Domain.Tasks.Dto;
@@ -17,6 +18,12 @@ internal class TasksRepository(TaskTrackerDbContext dbContext) : ITasksRepositor
         return Task.FromResult<IReadOnlyCollection<TaskDto>>(tasks);
     }
 
+    public async Task<TaskDto> GetById(TaskId taskId)
+    {
+        var task = await dbContext.Tasks.FirstAsync(t => t.Id == taskId.Value);
+        return Convert(task);
+    }
+
     public Task<IReadOnlyCollection<TaskDto>> ListByFinishDate(DateTime dateTime)
     {
         var tasks = dbContext.Tasks
@@ -27,7 +34,7 @@ internal class TasksRepository(TaskTrackerDbContext dbContext) : ITasksRepositor
         return Task.FromResult<IReadOnlyCollection<TaskDto>>(tasks);
     }
 
-    public async Task Create(CreateTaskDto dto)
+    public async Task<TaskId> Create(CreateTaskDto dto)
     {
         var task = new DbTask()
         {
@@ -36,6 +43,8 @@ internal class TasksRepository(TaskTrackerDbContext dbContext) : ITasksRepositor
         };
         await dbContext.AddAsync(task);
         await dbContext.SaveChangesAsync();
+
+        return new TaskId(task.Id);
     }
 
     public async Task Update(TaskManagementDto taskInfo)

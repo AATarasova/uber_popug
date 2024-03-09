@@ -1,27 +1,19 @@
 using System.Collections.Immutable;
 using TaskTracker.Domain.Employees;
 using TaskTracker.Domain.Tasks.Dto;
+using EventsManager.Domain.Producer;
 
 namespace TaskTracker.Domain.Tasks.Management;
 
-internal class TasksManager : ITasksManager
+internal class TasksManager(ITasksRepository repository, IEmployeesManager employeesManager, IEventProducer producer)
+    : ITasksManager
 {
-    private readonly ITasksRepository _repository;
-    private readonly IEmployeesManager _employeesManager;
+    private readonly Random _rnd = new();
 
-    private readonly Random _rnd;
-    
-    public TasksManager(ITasksRepository repository, IEmployeesManager employeesManager)
-    {
-        _repository = repository;
-        _employeesManager = employeesManager;
-        _rnd = new Random();
-    }
-
-    public Task<IReadOnlyCollection<TaskDto>> ListOpen() => _repository.ListOpen();
+    public Task<IReadOnlyCollection<TaskDto>> ListOpen() => repository.ListOpen();
 
     public Task<IReadOnlyCollection<TaskDto>> ListByFinishDate(DateTime dateTime) =>
-        _repository.ListByFinishDate(dateTime);
+        repository.ListByFinishDate(dateTime);
 
     public async Task Close(TaskId id)
     {
@@ -30,31 +22,52 @@ internal class TasksManager : ITasksManager
             Id = id,
             IsClosed = true
         };
-        await _repository.Update(editDto);
+        await repository.Update(editDto);
+
+        var task = await repository.GetById(id);
+        await producer.Produce("task-workflow", TaskStatus.Closed.ToString(), new TaskStatusChangedEvent
+        {
+            TaskId = task.PublicId,
+            DeveloperId = task.DeveloperId.Value,
+            Status = TaskStatus.Closed
+        });
     }
 
     public async Task Create(string description)
     {
-        var task = new CreateTaskDto()
+        var dto = new CreateTaskDto()
         {
             Description = description,
             DeveloperId = await GetDeveloperForTask()
         };
-        await _repository.Create(task);
+        var id = await repository.Create(dto);
+        var task = await repository.GetById(id);
+        await producer.Produce("tasks-streaming", "Created", new TaskCreatedEvent()
+        {
+            TaskId = task.PublicId,
+        });
     }
 
     public async Task Reassign()
     {
-        var openTasks = await _repository.ListOpen();
-        var developers = (await _employeesManager.ListAllDevelopers()).ToImmutableArray();
-        foreach (var task in openTasks)
-        {
-        }
-        
-        await _repository.Update(openTasks.Select(t => new TaskManagementDto()
+        var openTasks = await repository.ListOpen();
+        var developers = (await employeesManager.ListAllDevelopers()).ToImmutableArray();
+
+        await repository.Update(openTasks.Select(t => new TaskManagementDto()
         {
             DeveloperId = GetDeveloperForTask(developers)
         }).ToArray());
+        
+        // TODO: add batching
+        foreach (var task in await repository.ListOpen())
+        {
+            await producer.Produce("task-workflow", TaskStatus.Reassigned.ToString(), new TaskStatusChangedEvent
+            {
+                TaskId = task.PublicId,
+                DeveloperId = task.DeveloperId.Value,
+                Status = TaskStatus.Reassigned
+            });
+        }
     }
 
     private EmployeeId GetDeveloperForTask(IReadOnlyList<EmployeeId> developers)
@@ -64,7 +77,7 @@ internal class TasksManager : ITasksManager
 
     private async Task<EmployeeId> GetDeveloperForTask()
     {
-        var developers = (await _employeesManager.ListAllDevelopers()).ToImmutableArray();
+        var developers = (await employeesManager.ListAllDevelopers()).ToImmutableArray();
         return developers[_rnd.Next(developers.Count())];
     }
 }

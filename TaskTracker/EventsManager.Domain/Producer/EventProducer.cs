@@ -1,43 +1,38 @@
-using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Confluent.Kafka;
-using EventManager.Domain.Producer;
 
 namespace EventsManager.Domain.Producer;
 
 internal class EventProducer : IEventProducer
 {
-    private readonly IProducer<Guid, string> _producer;
-    
+    private readonly IProducer<string, string> _producer;
+    private readonly JsonSerializerOptions _serializerOptions;
+
     public EventProducer(string configuration)
     {
         var producerConfig = new ProducerConfig
         {
             BootstrapServers = configuration
         };
+        _serializerOptions = new JsonSerializerOptions{
+            Converters ={
+                new JsonStringEnumConverter()
+            }
+        };
 
-        _producer = new ProducerBuilder<Guid, string>(producerConfig)
-            .SetKeySerializer(new GuidSerializer())
-            .Build();    
+        _producer = new ProducerBuilder<string, string>(producerConfig).Build();
     }
-    
-    public async Task Produce<T>(string topic, T producedEvent) where T : ProducedEvent
+
+    public async Task Produce<T>(string topic, string key, T producedEvent)
     {
-        var serialized = JsonSerializer.Serialize(producedEvent);
-        var message = new Message<Guid, string> { Value = serialized, Key = producedEvent.Id};
+        var serialized = JsonSerializer.Serialize(producedEvent, _serializerOptions);
+        var message = new Message<string, string> { Value = serialized, Key = key };
 
         await _producer.ProduceAsync(topic, message, CancellationToken.None);
-            
-        Console.WriteLine($"Produced event to topic {topic}: key = {producedEvent.Id} value = {serialized}");
+
+        Console.WriteLine($"Produced event to topic {topic}: key = {key} value = {serialized}");
         _producer.Flush(TimeSpan.FromSeconds(10));
-        
-    }
-    
-    public class GuidSerializer :IAsyncSerializer<Guid>
-    {
-        public async Task<byte[]> SerializeAsync(Guid data, SerializationContext context)
-        {
-            return await Task.FromResult(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(data)));
-        }
+
     }
 }

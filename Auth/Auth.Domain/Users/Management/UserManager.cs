@@ -11,7 +11,7 @@ public class UserManager(IUserRepository repository, IRolesManager rolesManager,
         var id = await repository.Create(user);
 
         var createdUser = await repository.GetById(id);
-        await producer.Produce("employees-streaming", new EmployeeCreatedEvent
+        await producer.Produce("employees-streaming", "Created", new EmployeeCreatedEvent
         {
             EmployeeId = createdUser.PublicId,
             Role = createdUser.Role,
@@ -23,7 +23,7 @@ public class UserManager(IUserRepository repository, IRolesManager rolesManager,
         await rolesManager.ChangeRole(user, role);
 
         var updated = await repository.GetById(user);
-        await producer.Produce("employee-role-updates", new EmployeeRoleChangedEvent {
+        await producer.Produce("employee-role-updates", "RoleUpdated", new EmployeeRoleChangedEvent {
             EmployeeId = updated.PublicId,
             Role = updated.Role,
         });
