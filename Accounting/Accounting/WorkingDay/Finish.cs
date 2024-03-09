@@ -35,7 +35,7 @@ public static class Finish
                     Sum = t.Sum
                 })
                 .ToList();
-            await producer.Produce("accounts-state", today, new WorkdayCompletedEvent
+            await producer.Produce("workday_results", today, new WorkdayCompletedEvent
             {
                 Date = today,
                 AccountStates = accountStates,

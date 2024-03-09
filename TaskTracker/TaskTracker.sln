@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventsManager.Domain", "Eve
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskTracker.Consumer", "TaskTracker.Consumer\TaskTracker.Consumer.csproj", "{064F73AC-BBE9-499D-BC44-BAECEE5973C9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchemaRegistry", "..\SchemaRegistry\SchemaRegistry\SchemaRegistry.csproj", "{B959AC42-8F5F-489D-BCEC-904B77B60BB8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{064F73AC-BBE9-499D-BC44-BAECEE5973C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{064F73AC-BBE9-499D-BC44-BAECEE5973C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{064F73AC-BBE9-499D-BC44-BAECEE5973C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B959AC42-8F5F-489D-BCEC-904B77B60BB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B959AC42-8F5F-489D-BCEC-904B77B60BB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B959AC42-8F5F-489D-BCEC-904B77B60BB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B959AC42-8F5F-489D-BCEC-904B77B60BB8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

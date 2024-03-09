@@ -1,0 +1,97 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "WorkdayCompletedEvent",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "EmployeeId": {
+      "type": "string",
+      "format": "guid"
+    },
+    "Role": {
+      "$ref": "#/definitions/Role"
+    },
+    "EventMeta": {
+      "$ref": "#/definitions/EventMetaOfWorkdayCompletedEventVersion"
+    }
+  },
+  "definitions": {
+    "Date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "AccountStates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "EmployeeId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "Balance": {
+            "type": "integer"
+          }
+        }
+      },
+    "Transactions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "EmployeeId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "Sum": {
+            "type": "integer"
+          },
+          "TransactionType": {
+            "type": "integer",
+            "description": "",
+            "x-enumNames": [
+              "CompletedTaskPayment",
+              "AssignedTaskWithdrawal",
+              "SalaryPayment"
+            ],
+            "enum": [
+              1,
+              2,
+              3
+            ]
+          }
+        }
+        }
+      },
+      "description": ""
+    },
+    "EventMetaOfWorkdayCompletedEventVersion": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Version": {
+          "$ref": "#/definitions/WorkdayCompletedEventVersion"
+        },
+        "Time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Producer": {
+          "type": "string"
+        }
+      }
+    },
+    "WorkdayCompletedEventVersion": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "V1"
+      ],
+      "enum": [
+        1
+      ]
+    }
+  }
+}

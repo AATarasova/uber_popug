@@ -17,14 +17,14 @@ public class ConsumerBackgroundService(IServiceScopeFactory serviceScopeFactory,
     private async Task InitAccountsStateConsumer(CancellationToken cancellationToken)
     {
         Thread.CurrentThread.IsBackground = true;
-        logger.LogInformation("accounts-state consumer running at: {time}", DateTimeOffset.Now);
+        logger.LogInformation("workday_results consumer running at: {time}", DateTimeOffset.Now);
         using (var scope = serviceScopeFactory.CreateScope())
         {
             var eventConsumer = scope.ServiceProvider.GetRequiredService<IEventConsumer>();
             await eventConsumer.SubscribeTopic<WorkdayCompletedEvent>("employees-streaming", HandleWorkdayCompleted, cancellationToken);
         }
 
-        logger.LogInformation("accounts-state consumer stopped at: {time}", DateTimeOffset.Now);
+        logger.LogInformation("workday_results consumer stopped at: {time}", DateTimeOffset.Now);
     }
 
     private async Task HandleWorkdayCompleted(WorkdayCompletedEvent workdayCompleted)

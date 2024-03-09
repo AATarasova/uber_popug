@@ -1,0 +1,66 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "EmployeeCreatedEvent",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "EmployeeId": {
+      "type": "string",
+      "format": "guid"
+    },
+    "Role": {
+      "$ref": "#/definitions/Role"
+    },
+    "EventMeta": {
+      "$ref": "#/definitions/EventMetaOfEmployeeCreatedEventVersion"
+    }
+  },
+  "definitions": {
+    "Role": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Administrator",
+        "Developer",
+        "Manager",
+        "Accountant"
+      ],
+      "enum": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "EventMetaOfEmployeeCreatedEventVersion": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "EmployeeId": {
+          "type": "string",
+          "format": "guid"
+        },
+        "Version": {
+          "$ref": "#/definitions/EmployeeCreatedEventVersion"
+        },
+        "Time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Producer": {
+          "type": "string"
+        }
+      }
+    },
+    "EmployeeCreatedEventVersion": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "V1"
+      ],
+      "enum": [
+        1
+      ]
+    }
+  }
+}
