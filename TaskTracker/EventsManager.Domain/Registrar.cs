@@ -1,4 +1,3 @@
-using EventManager.Domain.Producer;
 using EventsManager.Domain.Consumer;
 using EventsManager.Domain.Producer;
 using Microsoft.Extensions.Configuration;

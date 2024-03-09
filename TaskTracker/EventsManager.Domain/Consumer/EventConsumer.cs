@@ -24,7 +24,7 @@ public class EventConsumer : IEventConsumer
             AutoOffsetReset = AutoOffsetReset.Earliest
         };
 
-        _consumer = new ConsumerBuilder<Guid, string>(consumerConfig).SetKeyDeserializer(new GuidSerializer()).Build();
+        _consumer = new ConsumerBuilder<Guid, string>(consumerConfig).Build();
     }
 
     public async Task SubscribeTopic<T>(string topic, Func<T, Task> messageHandler, CancellationToken cancellationToken)
