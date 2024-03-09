@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Dashboard.AccessRights;
 using Dashboard.Consumer;
 using Dashboard.DAL;
 using Dashboard.DAL.Context;
@@ -32,7 +33,11 @@ public class Startup
         
         serviceCollection.AddDbContext<DashboardDbContext>();
         serviceCollection.RegisterDAL();
-        serviceCollection.AddScoped<IEventConsumer>(p => new EventConsumer(configuration["Kafka:BootstrapServers"] ?? throw new InvalidOperationException()));
+        serviceCollection
+            .AddScoped<IEventConsumer>(p => new EventConsumer(configuration["Kafka:BootstrapServers"] ?? throw new InvalidOperationException()))
+            .AddTransient<AccessRightsManager>();
+        
+        serviceCollection.AddHostedService<ConsumerBackgroundService>();
     }
 
     public void ConfigureAuth(IServiceCollection serviceCollection, ConfigurationManager configuration)

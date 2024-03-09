@@ -23,8 +23,9 @@ public static class Finish
                 })
                 .ToList();
 
+            var today = DateTime.Today;
             var employeeByAccount = accounts.ToDictionary(a => a.Id, a => a.EmployeeId);
-            var transactions = await transactionRepository.ListByDate(DateTime.Today);
+            var transactions = await transactionRepository.ListByDate(today);
             var sharingTransactions = transactions
                 .Where(t => t.TransactionType != TransactionType.SalaryPayment)
                 .Select(t => new WorkdayCompletedEvent.Transaction
@@ -34,8 +35,9 @@ public static class Finish
                     Sum = t.Sum
                 })
                 .ToList();
-            await producer.Produce("accounts-state", new WorkdayCompletedEvent
+            await producer.Produce("accounts-state", today, new WorkdayCompletedEvent
             {
+                Date = today,
                 AccountStates = accountStates,
                 Transactions = sharingTransactions
             });

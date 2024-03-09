@@ -1,6 +1,6 @@
-using Accounting.Domain.Transactions;
+using Dashboard.Domain.Transactions;
 
-namespace Accounting.WorkingDay;
+namespace Dashboard.Consumer.WorkdayCompleted;
 
 public class WorkdayCompletedEvent
 {
