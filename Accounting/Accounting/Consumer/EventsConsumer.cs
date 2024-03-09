@@ -14,7 +14,7 @@ public class EventsConsumer(
     TaskCreatedHandler taskCreatedHandler,
     ILogger logger) : BackgroundService
 {
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var threads = new List<Thread>
         {
@@ -28,6 +28,8 @@ public class EventsConsumer(
         {
             thread.Start();
         }
+
+        return Task.CompletedTask;
     }
 
     private async Task StartTopicConsumer<T>(IEventHandler<T> handler, CancellationToken cancellationToken)

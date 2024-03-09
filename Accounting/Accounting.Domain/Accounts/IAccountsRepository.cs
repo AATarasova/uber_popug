@@ -1,7 +1,10 @@
 namespace Accounting.Domain.Accounts;
 
-internal interface IAccountsRepository
+public interface IAccountsRepository
 {
     Task Add(EmployeeId employeeId);
-    Task Update(EmployeeId employeeId, long sum);
+    Task Delete(EmployeeId employeeId);
+    Task<bool> CheckExists(EmployeeId employeeId);
+    Task<Account> GetByEmployeeId(EmployeeId employeeId);
+    Task<IReadOnlyCollection<Account>> ListAll();
 }

@@ -11,8 +11,8 @@ public class EmployeeCreatedHandler(IServiceScopeFactory serviceScopeFactory, IL
             return;
         }
         using var scope = serviceScopeFactory.CreateScope();
-        var manager = scope.ServiceProvider.GetRequiredService<IAccountManager>();
-        await manager.CreateAccount(new EmployeeId(employeeCreatedEvent.EmployeeId));
+        var manager = scope.ServiceProvider.GetRequiredService<IAccountsRepository>();
+        await manager.Add(new EmployeeId(employeeCreatedEvent.EmployeeId));
         logger.LogInformation($"New account for developer {employeeCreatedEvent.EmployeeId} added.");
     }
 

@@ -4,8 +4,8 @@ namespace Accounting.WorkingDay;
 
 public class WorkdayCompletedEvent
 {
-    public IReadOnlyCollection<AccountState> AccountStates { get; init; }
-    public IReadOnlyCollection<Transaction> Transactions { get; init; }
+    public IReadOnlyCollection<AccountState> AccountStates { get; init; } = null!;
+    public IReadOnlyCollection<Transaction> Transactions { get; init; } = null!;
 
     public class AccountState
     {

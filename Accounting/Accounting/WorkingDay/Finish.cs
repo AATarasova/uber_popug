@@ -9,12 +9,12 @@ public static class Finish
 {
     public record Command : IRequest;
     
-    public class Handler(IEventProducer producer, IAccountManager manager, ITransactionRepository transactionRepository)
+    public class Handler(IEventProducer producer, IAccountsRepository repository, ITransactionRepository transactionRepository)
         : IRequestHandler<Command>
     {
         public async Task Handle(Command request, CancellationToken cancellationToken)
         {
-            var accounts = await manager.ListAll();
+            var accounts = await repository.ListAll();
             var accountStates = accounts
                 .Select(a => new WorkdayCompletedEvent.AccountState
                 {

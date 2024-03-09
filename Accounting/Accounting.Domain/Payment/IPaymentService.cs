@@ -7,5 +7,5 @@ public interface IPaymentService
 {
     Task PayForCompletedTask(TaskId taskId, EmployeeId employeeId);
     Task GetPaidForAssignedTask(TaskId taskId, EmployeeId employeeId);
-    Task PaySalary(EmployeeId employeeId);
+    Task PaySalary();
 }

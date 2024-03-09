@@ -8,16 +8,16 @@ public class EmployeeRoleChangedHandler(IServiceScopeFactory serviceScopeFactory
     {
         var employeeId = new EmployeeId(employeeRoleChanged.EmployeeId);
         using var scope = serviceScopeFactory.CreateScope();
-        var manager = scope.ServiceProvider.GetRequiredService<IAccountManager>();
-        var alreadyExists = await manager.CheckExists(employeeId);
+        var repository = scope.ServiceProvider.GetRequiredService<IAccountsRepository>();
+        var alreadyExists = await repository.CheckExists(employeeId);
         if (employeeRoleChanged.Role == Role.Developer && !alreadyExists)
         {
-            await manager.CreateAccount(employeeId);
+            await repository.Add(employeeId);
             logger.LogInformation($"New account for developer {employeeRoleChanged.EmployeeId} added.");
         }
         if  (employeeRoleChanged.Role != Role.Developer && alreadyExists)
         {
-            await manager.DeleteAccount(employeeId);
+            await repository.Delete(employeeId);
             logger.LogInformation(
                 $"Account for developer {employeeRoleChanged.EmployeeId} deleted. Actual employee role is {employeeRoleChanged.Role.ToString()}");
         }

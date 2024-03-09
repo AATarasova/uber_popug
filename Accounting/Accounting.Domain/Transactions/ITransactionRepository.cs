@@ -1,9 +1,8 @@
-using Accounting.Domain.Accounts;
-
 namespace Accounting.Domain.Transactions;
 
 public interface ITransactionRepository
 {
-    Task Add(AccountId targetAccountId, TransactionType type, ulong sum);
+    Task Add(AddTransactionDto transactionInfo);
+    Task Add(IReadOnlyCollection<AddTransactionDto> transactionInfo);
     Task<IReadOnlyCollection<Transaction>> ListByDate(DateTime completedDate);
 }

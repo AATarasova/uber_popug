@@ -10,6 +10,7 @@ using Accounting.Consumer.TaskAssigned;
 using Accounting.Consumer.TaskCreated;
 using Accounting.DAL;
 using Accounting.DAL.Context;
+using Accounting.Domain;
 using EventsManager.Domain;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -38,6 +39,7 @@ public class Startup
         
         serviceCollection.AddDbContext<AccountingDbContext>();
         serviceCollection.RegisterDAL();
+        serviceCollection.RegisterDomain();
         serviceCollection.RegisterEventsDomain(configuration);
 
         serviceCollection.AddSingleton<EmployeeRoleChangedHandler>()
