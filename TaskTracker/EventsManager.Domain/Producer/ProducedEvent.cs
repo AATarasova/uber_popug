@@ -1,4 +1,4 @@
-namespace EventManager.Domain.Producer;
+namespace EventsManager.Domain.Producer;
 
 public abstract class ProducedEvent
 {

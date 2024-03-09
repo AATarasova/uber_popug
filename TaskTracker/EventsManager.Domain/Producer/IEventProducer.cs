@@ -1,6 +1,6 @@
-namespace EventManager.Domain.Producer;
+namespace EventsManager.Domain.Producer;
 
 public interface IEventProducer
 {
-    Task Produce<T>(string topic, T producedEvent) where T : ProducedEvent;
+    Task Produce<T>(string topic, string key, T producedEvent);
 }
