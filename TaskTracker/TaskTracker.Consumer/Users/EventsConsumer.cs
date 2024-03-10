@@ -9,6 +9,8 @@ using SchemaRegistry.Schemas.Employees.EmployeeCreatedEvent;
 using SchemaRegistry.Schemas.Employees.EmployeeRoleChangedEvent;
 using TaskTracker.Domain.Employees;
 using TaskTracker.Domain.Employees.Dto;
+using Role = TaskTracker.Domain.Employees.Role;
+using EventRole = SchemaRegistry.Schemas.Employees.Role;
 
 namespace TaskTracker.Consumer.Users;
 
@@ -59,7 +61,7 @@ public class EventsConsumer(IServiceScopeFactory serviceScopeFactory,
     private async Task AddEmployee(string value)
     {
         Validate(employeeCreatedEventSchemaRegistry, value);
-        var employeesChangedEvent = JsonSerializer.Deserialize<EmployeeCreatedEvent>(value, _serializerOptions)
+        var employeesChangedEvent = JsonSerializer.Deserialize<EmployeeCreatedEvent_V1>(value, _serializerOptions)
                                     ?? throw new InvalidOperationException();
 
         using var scope = serviceScopeFactory.CreateScope();
@@ -67,7 +69,7 @@ public class EventsConsumer(IServiceScopeFactory serviceScopeFactory,
         var createDeveloperDto = new Employee()
         {
             Id = new EmployeeId(employeesChangedEvent.EmployeeId),
-            Role = employeesChangedEvent.Role
+            Role = ConvertRole(employeesChangedEvent.Role)
         };
 
         await manager.Create(createDeveloperDto);
@@ -77,14 +79,14 @@ public class EventsConsumer(IServiceScopeFactory serviceScopeFactory,
     private async Task ChangeRole(string value)
     {
         Validate(employeeRoleChangedEventSchemaRegistry, value);
-        var employeesChangedEvent = JsonSerializer.Deserialize<EmployeeRoleChangedEvent>(value, _serializerOptions)
+        var employeesChangedEvent = JsonSerializer.Deserialize<EmployeeRoleChangedEvent_V1>(value, _serializerOptions)
                                     ?? throw new InvalidOperationException();
         using var scope = serviceScopeFactory.CreateScope();
         var manager = scope.ServiceProvider.GetRequiredService<IEmployeesManager>();
         var id = new EmployeeId(employeesChangedEvent.EmployeeId);
         var employees = await manager.ListAll();
         var target = employees.First(e => e.Value == id.Value);
-        await manager.UpdateRole(target, employeesChangedEvent.Role);
+        await manager.UpdateRole(target, ConvertRole(employeesChangedEvent.Role));
         logger.LogInformation($"Role for employee {employeesChangedEvent.EmployeeId} changed to {employeesChangedEvent.Role.ToString()}.");
     }
     
@@ -98,4 +100,13 @@ public class EventsConsumer(IServiceScopeFactory serviceScopeFactory,
             throw new InvalidCastException($"Message value {json} not match to schema V1");
         }
     }
+
+    private Role ConvertRole(EventRole role) => role switch
+    {
+        EventRole.Administrator => Role.Administrator,
+        EventRole.Developer => Role.Developer,
+        EventRole.Manager => Role.Manager,
+        EventRole.Accountant => Role.Accountant,
+        _ => throw new ArgumentOutOfRangeException(nameof(role), role, null)
+    };
 }

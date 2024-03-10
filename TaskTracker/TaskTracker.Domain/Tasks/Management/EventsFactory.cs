@@ -20,7 +20,7 @@ public class EventsFactory(
 
     public string CreateTaskCreatedEvent(Guid id)
     {
-        var producedEvent = new TaskCreatedEvent
+        var producedEvent = new TaskCreatedEvent_V1
         {
             TaskId = id,
         };
@@ -30,15 +30,15 @@ public class EventsFactory(
 
         if (validationErrors.Any())
         {
-            throw new InvalidCastException($"{nameof(TaskCreatedEvent)} not match to {LastSupportedVersion}");
+            throw new InvalidCastException($"{nameof(TaskCreatedEvent_V1)} not match to {LastSupportedVersion}");
         }
 
         return serialized;
     }
 
-    public string CreateTaskStatusChangedEvent(Guid taskId, Guid developerId, TaskStatus status)
+    public string CreateTaskStatusChangedEvent(Guid taskId, Guid developerId, SchemaRegistry.Schemas.Tasks.TaskStatusChangedEvent.TaskStatus status)
     {
-        var producedEvent = new TaskStatusChangedEvent
+        var producedEvent = new TaskStatusChangedEvent_V1
         {
             TaskId = taskId,
             DeveloperId = developerId,
@@ -50,7 +50,7 @@ public class EventsFactory(
 
         if (validationErrors.Any())
         {
-            throw new InvalidCastException($"{nameof(TaskCreatedEvent)} not match to {LastSupportedVersion}");
+            throw new InvalidCastException($"{nameof(TaskCreatedEvent_V1)} not match to {LastSupportedVersion}");
         }
 
         return serialized;

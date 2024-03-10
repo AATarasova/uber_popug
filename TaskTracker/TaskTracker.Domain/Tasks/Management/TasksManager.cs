@@ -25,8 +25,8 @@ internal class TasksManager(ITasksRepository repository, IEmployeesManager emplo
         await repository.Update(editDto);
 
         var task = await repository.GetById(id);
-        await producer.Produce("task-workflow", TaskStatus.Closed.ToString(),
-            taskEventsFactory.CreateTaskStatusChangedEvent(task.PublicId, task.DeveloperId.Value, TaskStatus.Closed));
+        await producer.Produce("task-workflow", SchemaRegistry.Schemas.Tasks.TaskStatusChangedEvent.TaskStatus.Closed.ToString(),
+            taskEventsFactory.CreateTaskStatusChangedEvent(task.PublicId, task.DeveloperId.Value, SchemaRegistry.Schemas.Tasks.TaskStatusChangedEvent.TaskStatus.Closed));
     }
 
     public async Task Create(string description)
@@ -39,7 +39,7 @@ internal class TasksManager(ITasksRepository repository, IEmployeesManager emplo
         var id = await repository.Create(dto);
         var task = await repository.GetById(id);
         
-        await producer.Produce("task-workflow", TaskStatus.Closed.ToString(), taskEventsFactory.CreateTaskCreatedEvent(task.PublicId));
+        await producer.Produce("task-workflow", SchemaRegistry.Schemas.Tasks.TaskStatusChangedEvent.TaskStatus.Closed.ToString(), taskEventsFactory.CreateTaskCreatedEvent(task.PublicId));
     }
 
     public async Task Reassign()
@@ -55,8 +55,8 @@ internal class TasksManager(ITasksRepository repository, IEmployeesManager emplo
         // TODO: add batching, add 2 types of events supporting
         foreach (var task in await repository.ListOpen())
         {
-            await producer.Produce("task-workflow", TaskStatus.Reassigned.ToString(),
-                taskEventsFactory.CreateTaskStatusChangedEvent(task.PublicId, task.DeveloperId.Value, TaskStatus.Reassigned));
+            await producer.Produce("task-workflow", SchemaRegistry.Schemas.Tasks.TaskStatusChangedEvent.TaskStatus.Reassigned.ToString(),
+                taskEventsFactory.CreateTaskStatusChangedEvent(task.PublicId, task.DeveloperId.Value, SchemaRegistry.Schemas.Tasks.TaskStatusChangedEvent.TaskStatus.Reassigned));
         }
     }
 
