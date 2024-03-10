@@ -11,7 +11,7 @@ public static class Registrar
 {
     public static IServiceCollection AddSchemaRegistry(this IServiceCollection services)
     {
-        services.AddSingleton<WorkdayCompletedEventSchemaRegistry>();
+        services.AddSingleton<Schemas.SchemaRegistry, WorkdayCompletedEventSchemaRegistry>();
         services.AddSingleton<EmployeeCreatedEventSchemaRegistry>();
         services.AddSingleton<EmployeeRoleChangedEventSchemaRegistry>();
         services.AddSingleton<TaskCreatedEventSchemaRegistry>();

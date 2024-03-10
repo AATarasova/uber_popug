@@ -5,7 +5,7 @@ using EventsManager.Domain.Producer;
 
 namespace TaskTracker.Domain.Tasks.Management;
 
-internal class TasksManager(ITasksRepository repository, IEmployeesManager employeesManager, IEventProducer producer)
+internal class TasksManager(ITasksRepository repository, IEmployeesManager employeesManager, IEventProducer producer, EventsFactory taskEventsFactory)
     : ITasksManager
 {
     private readonly Random _rnd = new();
@@ -25,12 +25,8 @@ internal class TasksManager(ITasksRepository repository, IEmployeesManager emplo
         await repository.Update(editDto);
 
         var task = await repository.GetById(id);
-        await producer.Produce("task-workflow", TaskStatus.Closed.ToString(), new TaskStatusChangedEvent
-        {
-            TaskId = task.PublicId,
-            DeveloperId = task.DeveloperId.Value,
-            Status = TaskStatus.Closed
-        });
+        await producer.Produce("task-workflow", TaskStatus.Closed.ToString(),
+            taskEventsFactory.CreateTaskStatusChangedEvent(task.PublicId, task.DeveloperId.Value, TaskStatus.Closed));
     }
 
     public async Task Create(string description)
@@ -42,10 +38,8 @@ internal class TasksManager(ITasksRepository repository, IEmployeesManager emplo
         };
         var id = await repository.Create(dto);
         var task = await repository.GetById(id);
-        await producer.Produce("tasks-streaming", "Created", new TaskCreatedEvent()
-        {
-            TaskId = task.PublicId,
-        });
+        
+        await producer.Produce("task-workflow", TaskStatus.Closed.ToString(), taskEventsFactory.CreateTaskCreatedEvent(task.PublicId));
     }
 
     public async Task Reassign()
@@ -58,15 +52,11 @@ internal class TasksManager(ITasksRepository repository, IEmployeesManager emplo
             DeveloperId = GetDeveloperForTask(developers)
         }).ToArray());
         
-        // TODO: add batching
+        // TODO: add batching, add 2 types of events supporting
         foreach (var task in await repository.ListOpen())
         {
-            await producer.Produce("task-workflow", TaskStatus.Reassigned.ToString(), new TaskStatusChangedEvent
-            {
-                TaskId = task.PublicId,
-                DeveloperId = task.DeveloperId.Value,
-                Status = TaskStatus.Reassigned
-            });
+            await producer.Produce("task-workflow", TaskStatus.Reassigned.ToString(),
+                taskEventsFactory.CreateTaskStatusChangedEvent(task.PublicId, task.DeveloperId.Value, TaskStatus.Reassigned));
         }
     }
 

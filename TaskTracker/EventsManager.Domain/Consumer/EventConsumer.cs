@@ -27,7 +27,7 @@ public class EventConsumer : IEventConsumer
         _consumer = new ConsumerBuilder<Guid, string>(consumerConfig).Build();
     }
 
-    public async Task SubscribeTopic<T>(string topic, Func<T, Task> messageHandler, CancellationToken cancellationToken)
+    public async Task SubscribeTopic(string topic, Func<string, Task> messageHandler, CancellationToken cancellationToken)
     {
         _consumer.Subscribe(topic);
 
@@ -37,8 +37,7 @@ public class EventConsumer : IEventConsumer
             {
                 var consumeResult = _consumer.Consume();
                 Console.WriteLine($"Received message with guid {consumeResult.Message.Key} and value {consumeResult.Message.Value}");
-                var parsed = JsonSerializer.Deserialize<T>(consumeResult.Message.Value, _serializerOptions) ?? throw new InvalidOperationException();
-                await messageHandler(parsed);
+                await messageHandler(consumeResult.Message.Value);
             }
             catch (Exception ex)
             {

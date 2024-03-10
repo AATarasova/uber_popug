@@ -7,6 +7,7 @@ public static class Registrar
 {
     public static void RegisterDomain(this IServiceCollection services)
     {
-        services.AddScoped<ITasksManager, TasksManager>();
+        services.AddScoped<ITasksManager, TasksManager>()
+            .AddScoped<EventsFactory>();
     }
 }
