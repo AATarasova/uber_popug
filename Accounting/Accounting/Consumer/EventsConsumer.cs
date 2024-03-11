@@ -39,7 +39,7 @@ public class EventsConsumer(
         using (var scope = serviceScopeFactory.CreateScope())
         {
             var eventConsumer = scope.ServiceProvider.GetRequiredService<IEventConsumer>();
-            await eventConsumer.SubscribeTopic<T>(handler.TopicName, handler.Handle, cancellationToken);
+            await eventConsumer.SubscribeTopic(handler.TopicName, handler.Handle, cancellationToken);
         }
 
         logger.LogInformation("{topicName} consumer stopped at: {time}", handler.TopicName, DateTimeOffset.Now);

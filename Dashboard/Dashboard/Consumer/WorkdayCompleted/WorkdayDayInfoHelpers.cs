@@ -1,13 +1,13 @@
 using Dashboard.Domain.Tasks;
-using Dashboard.Domain.Transactions;
 using Dashboard.Domain.Company;
 using Dashboard.Domain.Employee;
+using SchemaRegistry.Schemas.Accounting.WorkdayCompletedEvent;
 
 namespace Dashboard.Consumer.WorkdayCompleted;
 
 public static class WorkdayDayInfoHelpers
 {
-    public static EmployeesProductivityHistoryItem GetEmployeesProductivity(WorkdayCompletedEvent workdayCompleted) =>
+    public static EmployeesProductivityHistoryItem GetEmployeesProductivity(WorkdayCompletedEvent_V1 workdayCompleted) =>
         new()
         {
             EmployeesNumber = (uint)workdayCompleted.AccountStates.Count,
@@ -15,13 +15,13 @@ public static class WorkdayDayInfoHelpers
             Date = workdayCompleted.Date
         };
     
-    public static CompanyAccountHistoryItem GetCompanyAccountInfo(WorkdayCompletedEvent workdayCompleted)
+    public static CompanyAccountHistoryItem GetCompanyAccountInfo(WorkdayCompletedEvent_V1 workdayCompleted)
     {
         var assignedTasksCost = (long)workdayCompleted.Transactions
-            .Where(t => t.TransactionType == TransactionType.AssignedTaskWithdrawal)
+            .Where(t => t.TransactionType == EventTransactionType.AssignedTaskWithdrawal)
             .Sum(t => (decimal)t.Sum);
         var completedTasksCost = (long)workdayCompleted.Transactions
-            .Where(t => t.TransactionType == TransactionType.CompletedTaskPayment)
+            .Where(t => t.TransactionType == EventTransactionType.CompletedTaskPayment)
             .Sum(t => (decimal)t.Sum);
         
         return new CompanyAccountHistoryItem()
@@ -31,10 +31,10 @@ public static class WorkdayDayInfoHelpers
         };
     }
     
-    public static TasksRatingHistoryItem GetTasksRating(WorkdayCompletedEvent workdayCompleted)
+    public static TasksRatingHistoryItem GetTasksRating(WorkdayCompletedEvent_V1 workdayCompleted)
     {
         var completedTask = workdayCompleted.Transactions
-            .Where(t => t.TransactionType == TransactionType.CompletedTaskPayment)
+            .Where(t => t.TransactionType == EventTransactionType.CompletedTaskPayment)
             .MaxBy(t => t.Sum);
         
         return new TasksRatingHistoryItem

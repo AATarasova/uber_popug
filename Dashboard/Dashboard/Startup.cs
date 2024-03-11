@@ -9,6 +9,7 @@ using Dashboard.DAL.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
+using SchemaRegistry;
 
 namespace Dashboard;
 
@@ -32,6 +33,7 @@ public class Startup
         });
         
         serviceCollection.AddDbContext<DashboardDbContext>();
+        serviceCollection.AddSchemaRegistry();
         serviceCollection.RegisterDAL();
         serviceCollection
             .AddScoped<IEventConsumer>(p => new EventConsumer(configuration["Kafka:BootstrapServers"] ?? throw new InvalidOperationException()))

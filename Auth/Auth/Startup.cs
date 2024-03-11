@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
@@ -6,10 +5,13 @@ using System.Text.Json.Serialization;
 using Auth.DAL;
 using Auth.DAL.Context;
 using Auth.Domain;
-using EventManager.Domain;
+using Auth.Domain.Users.Management;
+using EventsManager.Domain;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
+using SchemaRegistry;
+
 namespace Auth;
 
 public class Startup
@@ -31,9 +33,12 @@ public class Startup
         });
     
         serviceCollection.AddDbContext<AuthDbContext>();
+        serviceCollection.AddSchemaRegistry();
         serviceCollection.RegisterAuthDAL();
         serviceCollection.RegisterAuthDomain();
         serviceCollection.RegisterEventsDomain(builderConfiguration);
+
+        serviceCollection.AddScoped<EventsFactory>();
     }
 
     public void ConfigureAuth(IServiceCollection serviceCollection, ConfigurationManager configuration)

@@ -4,4 +4,9 @@ public class EmployeeCreatedEvent_V1
 {
     public Guid EmployeeId { get; set; }
     public Role Role { get; init; }
+    
+    public EventMeta<EmployeeCreatedEventVersion> EventMeta { get; } = new()
+    {
+        Version = EmployeeCreatedEventVersion.V1
+    };
 }

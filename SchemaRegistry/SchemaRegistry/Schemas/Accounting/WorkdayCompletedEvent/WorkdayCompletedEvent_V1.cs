@@ -1,8 +1,6 @@
-using Accounting.Domain.Transactions;
+namespace SchemaRegistry.Schemas.Accounting.WorkdayCompletedEvent;
 
-namespace Accounting.WorkingDay;
-
-public class WorkdayCompletedEvent
+public class WorkdayCompletedEvent_V1
 {
     public DateTime Date { get; init; }
     public IReadOnlyCollection<AccountState> AccountStates { get; init; } = null!;
@@ -17,6 +15,6 @@ public class WorkdayCompletedEvent
     {
         public Guid EmployeeId { get; init; }
         public ulong Sum { get; init; }
-        public TransactionType TransactionType { get; init; }
+        public EventTransactionType TransactionType { get; init; }
     }
 };

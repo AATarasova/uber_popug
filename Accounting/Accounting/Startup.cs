@@ -11,10 +11,12 @@ using Accounting.Consumer.TaskCreated;
 using Accounting.DAL;
 using Accounting.DAL.Context;
 using Accounting.Domain;
+using Accounting.WorkingDay;
 using EventsManager.Domain;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
+using SchemaRegistry;
 
 namespace Accounting;
 
@@ -41,12 +43,15 @@ public class Startup
         serviceCollection.RegisterDAL();
         serviceCollection.RegisterDomain();
         serviceCollection.RegisterEventsDomain(configuration);
+        serviceCollection.AddSchemaRegistry();
 
         serviceCollection.AddSingleton<EmployeeRoleChangedHandler>()
             .AddSingleton<EmployeeCreatedHandler>()
             .AddSingleton<TaskStatusChangedHandler>()
             .AddSingleton<TaskCreatedHandler>()
-            .AddTransient<AccessRightsManager>();
+            .AddTransient<AccessRightsManager>()
+            .AddScoped<EventsFactory>()
+            .AddScoped<ProducedEventsFactory>();
         
         serviceCollection.AddHostedService<EventsConsumer>();
     }

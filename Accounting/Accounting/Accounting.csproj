@@ -21,8 +21,8 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\SchemaRegistry\SchemaRegistry\SchemaRegistry.csproj" />
+      <ProjectReference Include="..\..\TaskTracker\EventsManager.Domain\EventsManager.Domain.csproj" />
       <ProjectReference Include="..\Accounting.DAL\Accounting.DAL.csproj" />
-      <ProjectReference Include="..\EventsManager.Domain\EventsManager.Domain.csproj" />
     </ItemGroup>
 
     <ItemGroup>

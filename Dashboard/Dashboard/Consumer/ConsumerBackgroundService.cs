@@ -1,6 +1,7 @@
 using Dashboard.Consumer.WorkdayCompleted;
 using Dashboard.Domain.Company;
 using Dashboard.Domain.Employee;
+using SchemaRegistry.Schemas.Accounting.WorkdayCompletedEvent;
 
 namespace Dashboard.Consumer;
 
@@ -21,13 +22,13 @@ public class ConsumerBackgroundService(IServiceScopeFactory serviceScopeFactory,
         using (var scope = serviceScopeFactory.CreateScope())
         {
             var eventConsumer = scope.ServiceProvider.GetRequiredService<IEventConsumer>();
-            await eventConsumer.SubscribeTopic<WorkdayCompletedEvent>("employees-streaming", HandleWorkdayCompleted, cancellationToken);
+            await eventConsumer.SubscribeTopic<WorkdayCompletedEvent_V1>("employees-streaming", HandleWorkdayCompleted, cancellationToken);
         }
 
         logger.LogInformation("workday_results consumer stopped at: {time}", DateTimeOffset.Now);
     }
 
-    private async Task HandleWorkdayCompleted(WorkdayCompletedEvent workdayCompleted)
+    private async Task HandleWorkdayCompleted(WorkdayCompletedEvent_V1 workdayCompleted)
     {
         using var scope = serviceScopeFactory.CreateScope();
         

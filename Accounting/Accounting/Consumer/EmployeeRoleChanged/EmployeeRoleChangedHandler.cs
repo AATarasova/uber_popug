@@ -1,13 +1,18 @@
 using Accounting.Domain.Accounts;
+using Role = SchemaRegistry.Schemas.Employees.Role;
 
 namespace Accounting.Consumer.EmployeeRoleChanged;
 
 public class EmployeeRoleChangedHandler(IServiceScopeFactory serviceScopeFactory, ILogger<EmployeeRoleChangedHandler> logger) : IEventHandler<EmployeeRoleChangedEvent>
 {
-    public async Task Handle(EmployeeRoleChangedEvent employeeRoleChanged)
+    public async Task Handle(string value)
     {
-        var employeeId = new EmployeeId(employeeRoleChanged.EmployeeId);
         using var scope = serviceScopeFactory.CreateScope();
+        var factory = scope.ServiceProvider.GetRequiredService<EventsFactory>();
+
+        var employeeRoleChanged = await factory.CreateEmployeeRoleChanged(value);
+        
+        var employeeId = new EmployeeId(employeeRoleChanged.EmployeeId);
         var repository = scope.ServiceProvider.GetRequiredService<IAccountsRepository>();
         var alreadyExists = await repository.CheckExists(employeeId);
         if (employeeRoleChanged.Role == Role.Developer && !alreadyExists)

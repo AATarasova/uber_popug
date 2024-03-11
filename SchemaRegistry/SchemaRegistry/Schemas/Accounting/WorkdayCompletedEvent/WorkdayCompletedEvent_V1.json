@@ -4,18 +4,6 @@
   "type": "object",
   "additionalProperties": false,
   "properties": {
-    "EmployeeId": {
-      "type": "string",
-      "format": "guid"
-    },
-    "Role": {
-      "$ref": "#/definitions/Role"
-    },
-    "EventMeta": {
-      "$ref": "#/definitions/EventMetaOfWorkdayCompletedEventVersion"
-    }
-  },
-  "definitions": {
     "Date": {
       "type": "string",
       "format": "date-time"
@@ -35,63 +23,58 @@
           }
         }
       },
-    "Transactions": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "EmployeeId": {
-            "type": "string",
-            "format": "guid"
-          },
-          "Sum": {
-            "type": "integer"
-          },
-          "TransactionType": {
-            "type": "integer",
-            "description": "",
-            "x-enumNames": [
-              "CompletedTaskPayment",
-              "AssignedTaskWithdrawal",
-              "SalaryPayment"
-            ],
-            "enum": [
-              1,
-              2,
-              3
-            ]
+      "Transactions": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "EmployeeId": {
+              "type": "string",
+              "format": "guid"
+            },
+            "Sum": {
+              "type": "integer"
+            },
+            "TransactionType": {
+              "type": "integer",
+              "description": "",
+              "x-enumNames": [
+                "CompletedTaskPayment",
+                "AssignedTaskWithdrawal",
+                "SalaryPayment"
+              ],
+              "enum": [
+                1,
+                2,
+                3
+              ]
+            }
           }
-        }
         }
       },
       "description": ""
     },
-    "EventMetaOfWorkdayCompletedEventVersion": {
+    "EventMeta": {
+      "$ref": "#/definitions/EventMeta"
+    }
+  },
+  "definitions": {
+    "EventMeta": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
         "Version": {
-          "$ref": "#/definitions/WorkdayCompletedEventVersion"
-        },
-        "Time": {
           "type": "string",
-          "format": "date-time"
-        },
-        "Producer": {
-          "type": "string"
+          "description": "",
+          "x-enumNames": [
+            "V1"
+          ],
+          "enum": [
+            "V1"
+          ]
         }
       }
-    },
-    "WorkdayCompletedEventVersion": {
-      "type": "integer",
-      "description": "",
-      "x-enumNames": [
-        "V1"
-      ],
-      "enum": [
-        1
-      ]
     }
   }
 }

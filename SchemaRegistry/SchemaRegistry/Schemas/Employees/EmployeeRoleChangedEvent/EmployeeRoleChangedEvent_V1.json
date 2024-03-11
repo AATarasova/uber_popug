@@ -12,12 +12,12 @@
       "$ref": "#/definitions/Role"
     },
     "EventMeta": {
-      "$ref": "#/definitions/EventMetaOfEmployeeRoleChangedEventVersion"
+      "$ref": "#/definitions/EventMeta"
     }
   },
   "definitions": {
     "Role": {
-      "type": "integer",
+      "type": "string",
       "description": "",
       "x-enumNames": [
         "Administrator",
@@ -26,41 +26,27 @@
         "Accountant"
       ],
       "enum": [
-        1,
-        2,
-        3,
-        4
+        "Administrator",
+        "Developer",
+        "Manager",
+        "Accountant"
       ]
     },
-    "EventMetaOfEmployeeRoleChangedEventVersion": {
+    "EventMeta": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "EmployeeId": {
-          "type": "string",
-          "format": "guid"
-        },
         "Version": {
-          "$ref": "#/definitions/EmployeeRoleChangedEventVersion"
-        },
-        "Time": {
           "type": "string",
-          "format": "date-time"
-        },
-        "Producer": {
-          "type": "string"
+          "description": "",
+          "x-enumNames": [
+            "V1"
+          ],
+          "enum": [
+            "V1"
+          ]
         }
       }
-    },
-    "EmployeeRoleChangedEventVersion": {
-      "type": "integer",
-      "description": "",
-      "x-enumNames": [
-        "V1"
-      ],
-      "enum": [
-        1
-      ]
     }
   }
 }

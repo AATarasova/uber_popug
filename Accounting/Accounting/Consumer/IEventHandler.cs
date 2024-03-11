@@ -2,6 +2,6 @@ namespace Accounting.Consumer;
 
 public interface IEventHandler<T>
 {
-    Task Handle(T @event);
+    Task Handle(string value);
     string TopicName { get; }
 }

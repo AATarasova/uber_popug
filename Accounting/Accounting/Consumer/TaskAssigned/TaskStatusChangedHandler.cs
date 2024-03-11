@@ -7,9 +7,12 @@ namespace Accounting.Consumer.TaskAssigned;
 
 public class TaskStatusChangedHandler(IServiceScopeFactory serviceScopeFactory, ILogger<TaskStatusChangedHandler> logger) : IEventHandler<TaskStatusChangedEvent_V1>
 {
-    public async Task Handle(TaskStatusChangedEvent_V1 taskStatusChanged)
-    {
+    public async Task Handle(string value)
+    {   
         using var scope = serviceScopeFactory.CreateScope();
+        var factory = scope.ServiceProvider.GetRequiredService<EventsFactory>();
+
+        var taskStatusChanged = await factory.CreateTaskStatusChangedEvent(value);
         var paymentService = scope.ServiceProvider.GetRequiredService<IPaymentService>();
         var taskId = new TaskId(taskStatusChanged.TaskId);
         var employeeId = new EmployeeId(taskStatusChanged.DeveloperId);
