@@ -2,7 +2,7 @@ namespace SchemaRegistry.Schemas.Tasks.TaskCreatedEvent;
 
 public class TaskCreatedEventSchemaRegistry : SchemaRegistry
 {
-    public override string EventName => "TaskCreatedEvent";
-    public override string FeatureName => "Tasks";
-    public override IReadOnlyCollection<string> SupportedVersions => new[] { "V1" };
+    protected override string EventName => "TaskCreatedEvent";
+    protected override string FeatureName => "Tasks";
+    protected override IReadOnlyCollection<string> SupportedVersions => new[] { "V1" };
 }

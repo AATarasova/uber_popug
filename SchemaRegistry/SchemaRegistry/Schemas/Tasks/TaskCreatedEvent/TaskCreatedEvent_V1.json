@@ -9,34 +9,27 @@
       "format": "guid"
     },
     "EventMeta": {
-      "$ref": "#/definitions/EventMetaOfTaskCreatedEventVersion"
+      "$ref": "#/definitions/EventMeta"
     }
   },
   "definitions": {
-    "EventMetaOfTaskCreatedEventVersion": {
+    "EventMeta": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
         "Version": {
           "$ref": "#/definitions/TaskCreatedEventVersion"
-        },
-        "Time": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "Producer": {
-          "type": "string"
         }
       }
     },
     "TaskCreatedEventVersion": {
-      "type": "integer",
+      "type": "string",
       "description": "",
       "x-enumNames": [
         "V1"
       ],
       "enum": [
-        1
+        "V1"
       ]
     }
   }

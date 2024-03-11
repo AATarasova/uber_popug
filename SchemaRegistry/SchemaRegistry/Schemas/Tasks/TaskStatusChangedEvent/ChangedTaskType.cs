@@ -1,6 +1,6 @@
 namespace SchemaRegistry.Schemas.Tasks.TaskStatusChangedEvent;
 
-public enum TaskStatus
+public enum ChangedTaskType
 {
     Reassigned,
     Closed

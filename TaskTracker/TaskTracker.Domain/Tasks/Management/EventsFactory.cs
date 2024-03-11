@@ -1,6 +1,5 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using NJsonSchema;
 using SchemaRegistry.Schemas.Tasks.TaskCreatedEvent;
 using SchemaRegistry.Schemas.Tasks.TaskStatusChangedEvent;
 
@@ -18,41 +17,28 @@ public class EventsFactory(
         }
     };
 
-    public string CreateTaskCreatedEvent(Guid id)
+    public async Task<string> CreateTaskCreatedEvent(Guid id)
     {
         var producedEvent = new TaskCreatedEvent_V1
         {
             TaskId = id,
         };
         var serialized = JsonSerializer.Serialize(producedEvent, _serializerOptions);
-        var jsonSchema = taskCreatedEventSchemaRegistry.GetSchemaByVersion(LastSupportedVersion).Result;
-        var validationErrors = JsonSchema.FromJsonAsync(jsonSchema).Result.Validate(serialized);
-
-        if (validationErrors.Any())
-        {
-            throw new InvalidCastException($"{nameof(TaskCreatedEvent_V1)} not match to {LastSupportedVersion}");
-        }
+        await taskCreatedEventSchemaRegistry.Validate(serialized, LastSupportedVersion);
 
         return serialized;
     }
 
-    public string CreateTaskStatusChangedEvent(Guid taskId, Guid developerId, SchemaRegistry.Schemas.Tasks.TaskStatusChangedEvent.TaskStatus status)
+    public async Task<string> CreateTaskStatusChangedEvent(Guid taskId, Guid developerId, ChangedTaskType type)
     {
         var producedEvent = new TaskStatusChangedEvent_V1
         {
             TaskId = taskId,
             DeveloperId = developerId,
-            Status = status
+            Type = type,
         };
         var serialized = JsonSerializer.Serialize(producedEvent, _serializerOptions);
-        var jsonSchema = taskStatusChangedEventSchemaRegistry.GetSchemaByVersion(LastSupportedVersion).Result;
-        var validationErrors = JsonSchema.FromJsonAsync(jsonSchema).Result.Validate(serialized);
-
-        if (validationErrors.Any())
-        {
-            throw new InvalidCastException($"{nameof(TaskCreatedEvent_V1)} not match to {LastSupportedVersion}");
-        }
-
+        await taskStatusChangedEventSchemaRegistry.Validate(serialized, LastSupportedVersion);
         return serialized;
     }
 }

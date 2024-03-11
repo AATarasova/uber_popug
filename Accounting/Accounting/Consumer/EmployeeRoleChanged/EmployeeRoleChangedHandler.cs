@@ -2,7 +2,7 @@ using Accounting.Domain.Accounts;
 
 namespace Accounting.Consumer.EmployeeRoleChanged;
 
-public class EmployeeRoleChangedHandler(IServiceScopeFactory serviceScopeFactory, ILogger logger) : IEventHandler<EmployeeRoleChangedEvent>
+public class EmployeeRoleChangedHandler(IServiceScopeFactory serviceScopeFactory, ILogger<EmployeeRoleChangedHandler> logger) : IEventHandler<EmployeeRoleChangedEvent>
 {
     public async Task Handle(EmployeeRoleChangedEvent employeeRoleChanged)
     {

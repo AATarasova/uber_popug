@@ -12,50 +12,43 @@
       "type": "string",
       "format": "guid"
     },
-    "TaskStatus": {
-      "$ref": "#/definitions/TaskStatus"
+    "Type": {
+      "$ref": "#/definitions/ChangedTaskType"
     },
     "EventMeta": {
-      "$ref": "#/definitions/EventMetaOfTaskStatusChangedEventVersion"
+      "$ref": "#/definitions/EventMeta"
     }
   },
   "definitions": {
-    "TaskStatus": {
-      "type": "integer",
+    "ChangedTaskType": {
+      "type": "string",
       "description": "",
       "x-enumNames": [
         "Reassigned",
         "Closed"
       ],
       "enum": [
-        1,
-        2
+        "Reassigned",
+        "Closed"
       ]
     },
-    "EventMetaOfTaskStatusChangedEventVersion": {
+    "EventMeta": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
         "Version": {
           "$ref": "#/definitions/TaskStatusChangedEventVersion"
-        },
-        "Time": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "Producer": {
-          "type": "string"
         }
       }
     },
     "TaskStatusChangedEventVersion": {
-      "type": "integer",
+      "type": "string",
       "description": "",
       "x-enumNames": [
         "V1"
       ],
       "enum": [
-        1
+        "V1"
       ]
     }
   }

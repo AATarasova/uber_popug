@@ -1,22 +1,13 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Confluent.Kafka;
 
 namespace EventsManager.Domain.Consumer;
 
 public class EventConsumer : IEventConsumer
 {
-    private readonly IConsumer<Guid, string> _consumer;
-    private readonly JsonSerializerOptions _serializerOptions;
+    private readonly IConsumer<string, string> _consumer;
 
     public EventConsumer(string url)
     {
-        _serializerOptions = new JsonSerializerOptions{
-            Converters ={
-                new JsonStringEnumConverter()
-            }
-        };
-        
         var consumerConfig = new ConsumerConfig
         {
             BootstrapServers = url,
@@ -24,7 +15,7 @@ public class EventConsumer : IEventConsumer
             AutoOffsetReset = AutoOffsetReset.Earliest
         };
 
-        _consumer = new ConsumerBuilder<Guid, string>(consumerConfig).Build();
+        _consumer = new ConsumerBuilder<string, string>(consumerConfig).Build();
     }
 
     public async Task SubscribeTopic(string topic, Func<string, Task> messageHandler, CancellationToken cancellationToken)

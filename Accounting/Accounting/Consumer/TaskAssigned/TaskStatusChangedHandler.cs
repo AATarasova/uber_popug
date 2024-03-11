@@ -1,26 +1,27 @@
 using Accounting.Domain.Accounts;
 using Accounting.Domain.Payment;
 using Accounting.Domain.Tasks;
+using SchemaRegistry.Schemas.Tasks.TaskStatusChangedEvent;
 
 namespace Accounting.Consumer.TaskAssigned;
 
-public class TaskStatusChangedHandler(IServiceScopeFactory serviceScopeFactory, ILogger logger) : IEventHandler<TaskStatusChangedEvent>
+public class TaskStatusChangedHandler(IServiceScopeFactory serviceScopeFactory, ILogger<TaskStatusChangedHandler> logger) : IEventHandler<TaskStatusChangedEvent_V1>
 {
-    public async Task Handle(TaskStatusChangedEvent taskStatusChanged)
+    public async Task Handle(TaskStatusChangedEvent_V1 taskStatusChanged)
     {
         using var scope = serviceScopeFactory.CreateScope();
         var paymentService = scope.ServiceProvider.GetRequiredService<IPaymentService>();
         var taskId = new TaskId(taskStatusChanged.TaskId);
         var employeeId = new EmployeeId(taskStatusChanged.DeveloperId);
 
-        if (taskStatusChanged.Status == TaskStatus.Reassigned)
+        if (taskStatusChanged.Type == ChangedTaskType.Reassigned)
         {
             await paymentService.GetPaidForAssignedTask(taskId, employeeId);
             logger.LogInformation(
                 $"Payment for task {taskStatusChanged.TaskId} was gotten from {taskStatusChanged.DeveloperId}.");
         }
 
-        if (taskStatusChanged.Status == TaskStatus.Closed)
+        if (taskStatusChanged.Type == ChangedTaskType.Closed)
         {
             await paymentService.PayForCompletedTask(taskId, employeeId);
             logger.LogInformation(

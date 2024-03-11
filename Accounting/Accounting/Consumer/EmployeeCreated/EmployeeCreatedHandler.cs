@@ -2,7 +2,7 @@ using Accounting.Domain.Accounts;
 
 namespace Accounting.Consumer.EmployeeCreated;
 
-public class EmployeeCreatedHandler(IServiceScopeFactory serviceScopeFactory, ILogger logger) : IEventHandler<EmployeeCreatedEvent>
+public class EmployeeCreatedHandler(IServiceScopeFactory serviceScopeFactory, ILogger<EmployeeCreatedEvent> logger) : IEventHandler<EmployeeCreatedEvent>
 {
     public async Task Handle(EmployeeCreatedEvent employeeCreatedEvent)
     {

@@ -1,4 +1,3 @@
-using System.Text;
 using System.Text.Json;
 using Confluent.Kafka;
 
@@ -28,6 +27,5 @@ internal class EventProducer : IEventProducer
             
         Console.WriteLine($"Produced event to topic {topic}: value = {serialized}");
         _producer.Flush(TimeSpan.FromSeconds(10));
-        
     }
 }

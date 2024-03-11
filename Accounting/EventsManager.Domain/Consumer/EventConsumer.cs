@@ -6,7 +6,7 @@ namespace EventsManager.Domain.Consumer;
 
 public class EventConsumer : IEventConsumer
 {
-    private readonly IConsumer<Guid, string> _consumer;
+    private readonly IConsumer<string, string> _consumer;
     private readonly JsonSerializerOptions _serializerOptions;
 
     public EventConsumer(string url)
@@ -24,7 +24,7 @@ public class EventConsumer : IEventConsumer
             AutoOffsetReset = AutoOffsetReset.Earliest
         };
 
-        _consumer = new ConsumerBuilder<Guid, string>(consumerConfig).SetKeyDeserializer(new GuidSerializer()).Build();
+        _consumer = new ConsumerBuilder<string, string>(consumerConfig).Build();
     }
 
     public async Task SubscribeTopic<T>(string topic, Func<T, Task> messageHandler, CancellationToken cancellationToken)

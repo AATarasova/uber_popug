@@ -2,7 +2,7 @@ namespace SchemaRegistry.Schemas.Tasks.TaskStatusChangedEvent;
 
 public class TaskStatusChangedEventSchemaRegistry : SchemaRegistry
 {
-    public override string EventName => "TaskStatusChangedEvent";
-    public override string FeatureName => "Tasks";
-    public override IReadOnlyCollection<string> SupportedVersions => new[] { "V1" };
+    protected override string EventName => "TaskStatusChangedEvent";
+    protected override string FeatureName => "Tasks";
+    protected override IReadOnlyCollection<string> SupportedVersions => new[] { "V1" };
 }

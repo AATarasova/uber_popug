@@ -57,7 +57,8 @@ internal class TasksRepository(TaskTrackerDbContext dbContext) : ITasksRepositor
     public async Task Update(IReadOnlyCollection<TaskManagementDto> updates)
     {
         var dict = updates.ToDictionary(u => u.Id.Value);
-        foreach (var task in dbContext.Tasks.Where(t => dict.ContainsKey(t.Id)))
+        var tasks = await dbContext.Tasks.ToListAsync();
+        foreach (var task in tasks.Where(t => dict.ContainsKey(t.Id)))
         {    
             SetFields(task, dict[task.Id]);
         }

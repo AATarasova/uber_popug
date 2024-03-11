@@ -12,7 +12,7 @@ public class EventsConsumer(
     EmployeeRoleChangedHandler employeeRoleChangedHandler,
     TaskStatusChangedHandler taskStatusChangedHandler,
     TaskCreatedHandler taskCreatedHandler,
-    ILogger logger) : BackgroundService
+    ILogger<EventsConsumer> logger) : BackgroundService
 {
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -39,7 +39,7 @@ public class EventsConsumer(
         using (var scope = serviceScopeFactory.CreateScope())
         {
             var eventConsumer = scope.ServiceProvider.GetRequiredService<IEventConsumer>();
-            await eventConsumer.SubscribeTopic<T>("employees-streaming", handler.Handle, cancellationToken);
+            await eventConsumer.SubscribeTopic<T>(handler.TopicName, handler.Handle, cancellationToken);
         }
 
         logger.LogInformation("{topicName} consumer stopped at: {time}", handler.TopicName, DateTimeOffset.Now);
