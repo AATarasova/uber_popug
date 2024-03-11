@@ -12,7 +12,7 @@ using TaskTracker.DAL.Context;
 namespace TaskTracker.DAL.Migrations
 {
     [DbContext(typeof(TaskTrackerDbContext))]
-    [Migration("20240311204001_AddJiraIdToTasks")]
+    [Migration("20240311221312_AddJiraIdToTasks")]
     partial class AddJiraIdToTasks
     {
         /// <inheritdoc />
@@ -61,6 +61,9 @@ namespace TaskTracker.DAL.Migrations
 
                     b.Property<DateTime?>("FinishedDate")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("JiraId")
+                        .HasColumnType("text");
 
                     b.Property<Guid>("PublicId")
                         .HasColumnType("uuid");

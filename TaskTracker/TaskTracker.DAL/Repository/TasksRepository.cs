@@ -93,7 +93,7 @@ internal class TasksRepository(TaskTrackerDbContext dbContext) : ITasksRepositor
             Id = new TaskId(task.Id),
             PublicId = task.PublicId,
             Description = task.Description,
-            Title = task.Title,
+            Title = task.JiraId != null ? $"[{task.JiraId}] - {task.Title}" : task.Title,
             CreatedDate = task.CreatedDate,
             FinishedDate = task.FinishedDate
         };

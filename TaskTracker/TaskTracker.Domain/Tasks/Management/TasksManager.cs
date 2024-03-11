@@ -32,7 +32,7 @@ internal class TasksManager(ITasksRepository repository, IEmployeesManager emplo
         await producer.Produce("task-workflow", ChangedTaskType.Closed.ToString(), @event);
     }
 
-    public async Task Create(string title, string description)
+    public async Task Create(string jiraId, string title, string description)
     {
         var dto = new CreateTaskDto()
         {

@@ -59,6 +59,9 @@ namespace TaskTracker.DAL.Migrations
                     b.Property<DateTime?>("FinishedDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("JiraId")
+                        .HasColumnType("text");
+
                     b.Property<Guid>("PublicId")
                         .HasColumnType("uuid");
 

@@ -13,6 +13,7 @@ public static class Create
     {
         public string Description { get; set; } = null!;
         public string Title { get; set; } = null!;
+        public string JiraId { get; set; } = null!;
     }
     
     public class Handler(ITasksManager tasksManager)
@@ -20,7 +21,7 @@ public static class Create
     {
         public async Task Handle(Command request, CancellationToken cancellationToken)
         {
-            await tasksManager.Create(request.Args.Title, request.Args.Description);
+            await tasksManager.Create(request.Args.JiraId, request.Args.Title, request.Args.Description);
         }
     }
 }

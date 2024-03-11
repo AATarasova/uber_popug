@@ -17,11 +17,11 @@ public class AccountsRepository(AccountingDbContext dbContext) : IAccountsReposi
         await dbContext.SaveChangesAsync();
     }
 
-    public Task Delete(EmployeeId employeeId)
+    public async Task Delete(EmployeeId employeeId)
     {
         var account = dbContext.Accounts.First(a => a.EmployeeId == employeeId.Value);
         dbContext.Accounts.Remove(account);
-        return Task.CompletedTask;
+        await dbContext.SaveChangesAsync();
     }
 
     public async Task<bool> CheckExists(EmployeeId employeeId)
