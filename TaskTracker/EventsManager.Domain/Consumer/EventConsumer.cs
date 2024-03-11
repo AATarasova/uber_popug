@@ -18,7 +18,7 @@ public class EventConsumer : IEventConsumer
         _consumer = new ConsumerBuilder<string, string>(consumerConfig).Build();
     }
 
-    public async Task SubscribeTopic(string topic, Func<string, Task> messageHandler, CancellationToken cancellationToken)
+    public async Task SubscribeTopic(string topic, Func<Message<string, string>, Task> messageHandler, CancellationToken cancellationToken)
     {
         _consumer.Subscribe(topic);
 
@@ -28,7 +28,7 @@ public class EventConsumer : IEventConsumer
             {
                 var consumeResult = _consumer.Consume();
                 Console.WriteLine($"Received message with guid {consumeResult.Message.Key} and value {consumeResult.Message.Value}");
-                await messageHandler(consumeResult.Message.Value);
+                await messageHandler(consumeResult.Message);
             }
             catch (Exception ex)
             {

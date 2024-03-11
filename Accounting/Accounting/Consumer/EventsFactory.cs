@@ -1,7 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Accounting.Consumer.EmployeeCreated;
-using Accounting.Consumer.EmployeeRoleChanged;
+using Accounting.Consumer.TaskCreated;
 using SchemaRegistry.Schemas.Employees.EmployeeCreatedEvent;
 using SchemaRegistry.Schemas.Employees.EmployeeRoleChangedEvent;
 using SchemaRegistry.Schemas.Tasks.TaskCreatedEvent;
@@ -41,13 +40,31 @@ public class EventsFactory(
         return parsed;
     }
 
-    public async Task<TaskCreatedEvent_V1> CreateTaskCreatedEvent(string value)
+    public async Task<TaskCreatedEvent> CreateTaskCreatedEvent(string value, TaskCreatedEventVersion version)
     {
         await taskCreatedEventSchemaRegistry.Validate(value, LastSupportedVersion);
-        var parsed = JsonSerializer.Deserialize<TaskCreatedEvent_V1>(value, _serializerOptions)
-                     ?? throw new InvalidOperationException();
-        
-        return parsed;
+        TaskCreatedEvent @event;
+        switch (version)
+        {
+            case TaskCreatedEventVersion.V1:
+                var parsedV1 = JsonSerializer.Deserialize<TaskCreatedEvent_V1>(value, _serializerOptions);
+                @event = new TaskCreatedEvent()
+                {
+                    TaskId = parsedV1!.TaskId
+                };
+                break;
+            case TaskCreatedEventVersion.V2:
+                var parsedV2 = JsonSerializer.Deserialize<TaskCreatedEvent_V2>(value, _serializerOptions);
+                @event = new TaskCreatedEvent()
+                {
+                    TaskId = parsedV2!.TaskId
+                };
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(version), version, null);
+        }
+
+        return @event;
     }
 
     public async Task<TaskStatusChangedEvent_V1> CreateTaskStatusChangedEvent(string value)

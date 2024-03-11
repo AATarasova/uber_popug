@@ -32,7 +32,7 @@ public class EventsConsumer(
         return Task.CompletedTask;
     }
 
-    private async Task StartTopicConsumer<T>(IEventHandler<T> handler, CancellationToken cancellationToken)
+    private async Task StartTopicConsumer(IEventHandler handler, CancellationToken cancellationToken)
     {
         Thread.CurrentThread.IsBackground = true;
         logger.LogInformation("{topicName} consumer running at: {time}", handler.TopicName, DateTimeOffset.Now);

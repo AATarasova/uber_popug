@@ -1,7 +1,9 @@
+using Confluent.Kafka;
+
 namespace Accounting.Consumer;
 
-public interface IEventHandler<T>
+public interface IEventHandler
 {
-    Task Handle(string value);
+    Task Handle(Message<string, string> message);
     string TopicName { get; }
 }

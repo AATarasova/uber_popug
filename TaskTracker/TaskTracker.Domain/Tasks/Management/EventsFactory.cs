@@ -17,13 +17,28 @@ public class EventsFactory(
         }
     };
 
-    public async Task<string> CreateTaskCreatedEvent(Guid id)
+    public async Task<string> CreateTaskCreatedEvent(Guid id, string title)
     {
         var producedEvent = new TaskCreatedEvent_V1
         {
             TaskId = id,
+            Title = title
         };
         var serialized = JsonSerializer.Serialize(producedEvent, _serializerOptions);
+        await taskCreatedEventSchemaRegistry.Validate(serialized, LastSupportedVersion);
+
+        return serialized;
+    }
+    public async Task<string> CreateTaskCreatedEvent(Guid id, string title, string jiraId)
+    {
+        var producedEvent = new TaskCreatedEvent_V2
+        {
+            TaskId = id,
+            Title = title,
+            JiraId = jiraId
+        };
+        var serialized = JsonSerializer.Serialize(producedEvent, _serializerOptions);
+
         await taskCreatedEventSchemaRegistry.Validate(serialized, LastSupportedVersion);
 
         return serialized;

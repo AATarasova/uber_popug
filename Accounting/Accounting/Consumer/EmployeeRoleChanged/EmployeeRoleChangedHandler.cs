@@ -1,16 +1,17 @@
 using Accounting.Domain.Accounts;
+using Confluent.Kafka;
 using Role = SchemaRegistry.Schemas.Employees.Role;
 
 namespace Accounting.Consumer.EmployeeRoleChanged;
 
-public class EmployeeRoleChangedHandler(IServiceScopeFactory serviceScopeFactory, ILogger<EmployeeRoleChangedHandler> logger) : IEventHandler<EmployeeRoleChangedEvent>
+public class EmployeeRoleChangedHandler(IServiceScopeFactory serviceScopeFactory, ILogger<EmployeeRoleChangedHandler> logger) : IEventHandler
 {
-    public async Task Handle(string value)
+    public async Task Handle(Message<string, string> message)
     {
         using var scope = serviceScopeFactory.CreateScope();
         var factory = scope.ServiceProvider.GetRequiredService<EventsFactory>();
 
-        var employeeRoleChanged = await factory.CreateEmployeeRoleChanged(value);
+        var employeeRoleChanged = await factory.CreateEmployeeRoleChanged(message.Value);
         
         var employeeId = new EmployeeId(employeeRoleChanged.EmployeeId);
         var repository = scope.ServiceProvider.GetRequiredService<IAccountsRepository>();

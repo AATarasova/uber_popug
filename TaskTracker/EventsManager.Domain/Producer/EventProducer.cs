@@ -1,3 +1,4 @@
+using System.Text;
 using Confluent.Kafka;
 
 namespace EventsManager.Domain.Producer;
@@ -13,15 +14,23 @@ internal class EventProducer : IEventProducer
             BootstrapServers = configuration
         };
 
-        _producer = new ProducerBuilder<string, string>(producerConfig).Build();
+        var builder = new ProducerBuilder<string, string>(producerConfig);
+        _producer = builder.Build();
     }
 
-    public async Task Produce(string topic, string key, string producedEvent)
+    public async Task Produce(string topic, string version, string producedEvent)
     {
-        var message = new Message<string, string> { Value = producedEvent, Key = key };
+        var headers = new Headers();
+        headers.Add( "Version", Encoding.UTF8.GetBytes(version));
+        var message = new Message<string, string>
+        {
+            Value = producedEvent, 
+            Key = version, 
+            Headers = headers
+        };
 
         await _producer.ProduceAsync(topic, message, CancellationToken.None);
 
-        Console.WriteLine($"Produced event to topic {topic}: key = {key} value = {producedEvent}");
+        Console.WriteLine($"Produced event to topic {topic}: key = {version} value = {producedEvent}");
     }
 }

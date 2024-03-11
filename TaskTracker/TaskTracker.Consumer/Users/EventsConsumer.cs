@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Confluent.Kafka;
 using EventsManager.Domain.Consumer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -58,10 +59,10 @@ public class EventsConsumer(IServiceScopeFactory serviceScopeFactory,
         logger.LogInformation("employee-role-updates consumer stopped at: {time}", DateTimeOffset.Now);
     }
 
-    private async Task AddEmployee(string value)
+    private async Task AddEmployee(Message<string, string> message)
     {
-        Validate(employeeCreatedEventSchemaRegistry, value);
-        var employeesChangedEvent = JsonSerializer.Deserialize<EmployeeCreatedEvent_V1>(value, _serializerOptions)
+        Validate(employeeCreatedEventSchemaRegistry, message.Value);
+        var employeesChangedEvent = JsonSerializer.Deserialize<EmployeeCreatedEvent_V1>(message.Value, _serializerOptions)
                                     ?? throw new InvalidOperationException();
 
         using var scope = serviceScopeFactory.CreateScope();
@@ -76,10 +77,10 @@ public class EventsConsumer(IServiceScopeFactory serviceScopeFactory,
         logger.LogInformation($"Employee {createDeveloperDto.Id} added.");
     }
     
-    private async Task ChangeRole(string value)
+    private async Task ChangeRole(Message<string, string> message)
     {
-        Validate(employeeRoleChangedEventSchemaRegistry, value);
-        var employeesChangedEvent = JsonSerializer.Deserialize<EmployeeRoleChangedEvent_V1>(value, _serializerOptions)
+        Validate(employeeRoleChangedEventSchemaRegistry, message.Value);
+        var employeesChangedEvent = JsonSerializer.Deserialize<EmployeeRoleChangedEvent_V1>(message.Value, _serializerOptions)
                                     ?? throw new InvalidOperationException();
         using var scope = serviceScopeFactory.CreateScope();
         var manager = scope.ServiceProvider.GetRequiredService<IEmployeesManager>();

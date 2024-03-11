@@ -40,6 +40,7 @@ internal class TasksRepository(TaskTrackerDbContext dbContext) : ITasksRepositor
         {
             DeveloperId = dto.DeveloperId.Value,
             Description = dto.Description,
+            Title = dto.Title
         };
         await dbContext.AddAsync(task);
         await dbContext.SaveChangesAsync();
@@ -71,6 +72,10 @@ internal class TasksRepository(TaskTrackerDbContext dbContext) : ITasksRepositor
         {
             task.Description = updateDto.Description;
         }
+        if (updateDto.Title is not null)
+        {
+            task.Description = updateDto.Title;
+        }
 
         if (updateDto.DeveloperId.HasValue)
         {
@@ -88,6 +93,7 @@ internal class TasksRepository(TaskTrackerDbContext dbContext) : ITasksRepositor
             Id = new TaskId(task.Id),
             PublicId = task.PublicId,
             Description = task.Description,
+            Title = task.Title,
             CreatedDate = task.CreatedDate,
             FinishedDate = task.FinishedDate
         };

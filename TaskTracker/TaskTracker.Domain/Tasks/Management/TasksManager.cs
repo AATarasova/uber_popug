@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using TaskTracker.Domain.Employees;
 using TaskTracker.Domain.Tasks.Dto;
 using EventsManager.Domain.Producer;
+using SchemaRegistry.Schemas.Tasks.TaskCreatedEvent;
 using SchemaRegistry.Schemas.Tasks.TaskStatusChangedEvent;
 
 namespace TaskTracker.Domain.Tasks.Management;
@@ -18,7 +19,7 @@ internal class TasksManager(ITasksRepository repository, IEmployeesManager emplo
 
     public async Task Close(TaskId id)
     {
-        var editDto = new TaskManagementDto()
+        var editDto = new TaskManagementDto
         {
             Id = id,
             IsClosed = true
@@ -31,18 +32,22 @@ internal class TasksManager(ITasksRepository repository, IEmployeesManager emplo
         await producer.Produce("task-workflow", ChangedTaskType.Closed.ToString(), @event);
     }
 
-    public async Task Create(string description)
+    public async Task Create(string title, string description)
     {
         var dto = new CreateTaskDto()
         {
+            Title = title,
             Description = description,
             DeveloperId = await GetDeveloperForTask()
         };
         var id = await repository.Create(dto);
         var task = await repository.GetById(id);
 
-        var @event = await taskEventsFactory.CreateTaskCreatedEvent(task.PublicId);
-        await producer.Produce("task-streaming", "Created", @event);
+        var eventV1 = await taskEventsFactory.CreateTaskCreatedEvent(task.PublicId, task.Title);
+        var eventV2 = await taskEventsFactory.CreateTaskCreatedEvent(task.PublicId, task.Title);
+        
+        await producer.Produce("task-streaming", TaskCreatedEventVersion.V1.ToString(), eventV1);
+        await producer.Produce("task-streaming", TaskCreatedEventVersion.V2.ToString(), eventV2);
     }
 
     public async Task Reassign()

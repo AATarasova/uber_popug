@@ -10,12 +10,6 @@ public sealed class TaskTrackerDbContext : DbContext
     internal DbSet<DbTask> Tasks { get; set; } = null!;
     internal DbSet<Employee> Employees { get; set; } = null!;
 
-    public TaskTrackerDbContext()
-    {
-        Database.EnsureCreated();
-
-    }
-    
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseNpgsql("Server=localhost;Database=popug_task_tracker;Username=postgres;Password=34767;");

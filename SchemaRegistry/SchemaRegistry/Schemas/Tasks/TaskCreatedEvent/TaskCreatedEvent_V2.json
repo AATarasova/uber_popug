@@ -8,6 +8,9 @@
       "type": "string",
       "format": "guid"
     },
+    "JiraId": {
+      "type": "string"
+    },
     "Title": {
       "type": "string"
     },
@@ -29,10 +32,12 @@
       "type": "string",
       "description": "",
       "x-enumNames": [
-        "V1"
+        "V1",
+        "V2"
       ],
       "enum": [
-        "V1"
+        "V1",
+        "V2"
       ]
     }
   }
