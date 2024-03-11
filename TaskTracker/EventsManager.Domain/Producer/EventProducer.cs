@@ -6,20 +6,29 @@ namespace EventsManager.Domain.Producer;
 internal class EventProducer : IEventProducer
 {
     private readonly IProducer<string, string> _producer;
-    private List<(string, Message<string, string>)> _delayedMessages;
-    private Thread retryThread;
+    private Queue<(string, Message<string, string>)> _delayedMessages;
+    private readonly Thread retryThread;
 
     private async Task Retry()
     {
         Thread.CurrentThread.IsBackground = true;
-        foreach (var (topic, message) in _delayedMessages)
+        while (_delayedMessages.Count > 0)
         {
             Thread.Sleep(4000);
-            await _producer.ProduceAsync(topic, message, CancellationToken.None);
+            var (topic, message) = _delayedMessages.Peek();
+            try
+            {
+                await _producer.ProduceAsync(topic, message, CancellationToken.None);
+                _delayedMessages.Dequeue();
+            }
+            catch (ProduceException<string, string>)
+            {
+            }
         }
     }
     public EventProducer(string configuration)
     {
+        _delayedMessages = new Queue<(string, Message<string, string>)>();
         retryThread = new Thread(async () => await  Retry());
         var producerConfig = new ProducerConfig
         {
@@ -49,7 +58,7 @@ internal class EventProducer : IEventProducer
         {
             if (exception.DeliveryResult.Status == PersistenceStatus.NotPersisted)
             {
-                _delayedMessages.Add((topic, message));
+                _delayedMessages.Enqueue((topic, message));
                 if (!retryThread.IsAlive)
                 {
                     retryThread.Start();
