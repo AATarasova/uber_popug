@@ -12,8 +12,8 @@ using TaskTracker.DAL.Context;
 namespace TaskTracker.DAL.Migrations
 {
     [DbContext(typeof(TaskTrackerDbContext))]
-    [Migration("20240229215825_Initial")]
-    partial class Initial
+    [Migration("20240311202129_Initial1")]
+    partial class Initial1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -64,6 +64,10 @@ namespace TaskTracker.DAL.Migrations
 
                     b.Property<Guid>("PublicId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 

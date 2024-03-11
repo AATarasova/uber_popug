@@ -19,6 +19,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\EventManager.Domain\EventManager.Domain.csproj" />
+      <ProjectReference Include="..\..\TaskTracker\EventsManager.Domain\EventsManager.Domain.csproj" />
     </ItemGroup>
 </Project>

@@ -28,6 +28,7 @@ public class TasksRepository(AccountingDbContext dbContext) : ITasksRepository
             TaskId = taskId.Value,
         };
         await dbContext.Tasks.AddAsync(task);
+        await dbContext.SaveChangesAsync();
     }
 
     public async Task<TaskDto> GetById(TaskId taskId)

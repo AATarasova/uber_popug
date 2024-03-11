@@ -22,8 +22,8 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\TaskTracker\EventsManager.Domain\EventsManager.Domain.csproj" />
         <ProjectReference Include="..\Auth.DAL\Auth.DAL.csproj" />
-        <ProjectReference Include="..\EventManager.Domain\EventManager.Domain.csproj" />
     </ItemGroup>
 
     <ItemGroup>

@@ -20,6 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\SchemaRegistry\SchemaRegistry\SchemaRegistry.csproj" />
         <ProjectReference Include="..\EventsManager.Domain\EventsManager.Domain.csproj" />
         <ProjectReference Include="..\TaskTracker.Consumer\TaskTracker.Consumer.csproj" />
         <ProjectReference Include="..\TaskTracker.DAL\TaskTracker.DAL.csproj" />

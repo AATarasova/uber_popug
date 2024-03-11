@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "EmployeeRoleChangedEvent",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "EmployeeId": {
+      "type": "string",
+      "format": "guid"
+    },
+    "Role": {
+      "$ref": "#/definitions/Role"
+    },
+    "EventMeta": {
+      "$ref": "#/definitions/EventMeta"
+    }
+  },
+  "definitions": {
+    "Role": {
+      "type": "string",
+      "description": "",
+      "x-enumNames": [
+        "Administrator",
+        "Developer",
+        "Manager",
+        "Accountant"
+      ],
+      "enum": [
+        "Administrator",
+        "Developer",
+        "Manager",
+        "Accountant"
+      ]
+    },
+    "EventMeta": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Version": {
+          "type": "string",
+          "description": "",
+          "x-enumNames": [
+            "V1"
+          ],
+          "enum": [
+            "V1"
+          ]
+        }
+      }
+    }
+  }
+}

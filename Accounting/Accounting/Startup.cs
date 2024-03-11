@@ -2,12 +2,21 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Accounting.AccessRights;
+using Accounting.Consumer;
+using Accounting.Consumer.EmployeeCreated;
+using Accounting.Consumer.EmployeeRoleChanged;
+using Accounting.Consumer.TaskAssigned;
+using Accounting.Consumer.TaskCreated;
 using Accounting.DAL;
 using Accounting.DAL.Context;
+using Accounting.Domain;
+using Accounting.WorkingDay;
 using EventsManager.Domain;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
+using SchemaRegistry;
 
 namespace Accounting;
 
@@ -32,7 +41,19 @@ public class Startup
         
         serviceCollection.AddDbContext<AccountingDbContext>();
         serviceCollection.RegisterDAL();
+        serviceCollection.RegisterDomain();
         serviceCollection.RegisterEventsDomain(configuration);
+        serviceCollection.AddSchemaRegistry();
+
+        serviceCollection.AddSingleton<EmployeeRoleChangedHandler>()
+            .AddSingleton<EmployeeCreatedHandler>()
+            .AddSingleton<TaskStatusChangedHandler>()
+            .AddSingleton<TaskCreatedHandler>()
+            .AddTransient<AccessRightsManager>()
+            .AddScoped<EventsFactory>()
+            .AddScoped<ProducedEventsFactory>();
+        
+        serviceCollection.AddHostedService<EventsConsumer>();
     }
 
     public void ConfigureAuth(IServiceCollection serviceCollection, ConfigurationManager configuration)

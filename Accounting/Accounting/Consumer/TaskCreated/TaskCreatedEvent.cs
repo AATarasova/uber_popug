@@ -1,4 +1,4 @@
-namespace TaskTracker.Domain.Tasks.Management;
+namespace Accounting.Consumer.TaskCreated;
 
 public class TaskCreatedEvent
 {

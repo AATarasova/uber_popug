@@ -22,7 +22,10 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\SchemaRegistry\SchemaRegistry\SchemaRegistry.csproj" />
         <ProjectReference Include="..\Dashboard.DAL\Dashboard.DAL.csproj" />
     </ItemGroup>
+
+
 
 </Project>

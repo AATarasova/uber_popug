@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "TaskStatusChangedEvent",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "TaskId": {
+      "type": "string",
+      "format": "guid"
+    },
+    "DeveloperId": {
+      "type": "string",
+      "format": "guid"
+    },
+    "Type": {
+      "$ref": "#/definitions/ChangedTaskType"
+    },
+    "EventMeta": {
+      "$ref": "#/definitions/EventMeta"
+    }
+  },
+  "definitions": {
+    "ChangedTaskType": {
+      "type": "string",
+      "description": "",
+      "x-enumNames": [
+        "Reassigned",
+        "Closed"
+      ],
+      "enum": [
+        "Reassigned",
+        "Closed"
+      ]
+    },
+    "EventMeta": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Version": {
+          "$ref": "#/definitions/TaskStatusChangedEventVersion"
+        }
+      }
+    },
+    "TaskStatusChangedEventVersion": {
+      "type": "string",
+      "description": "",
+      "x-enumNames": [
+        "V1"
+      ],
+      "enum": [
+        "V1"
+      ]
+    }
+  }
+}

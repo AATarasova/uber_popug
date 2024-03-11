@@ -8,6 +8,7 @@ public class TaskDto
     public Guid PublicId { get; set; }
     public EmployeeId DeveloperId { get; set; }
     public string Description { get; set; } = null!;
+    public string Title { get; set; } = null!;
     public DateTime CreatedDate { get; set; }
     public DateTime? FinishedDate { get; set; }
     public TaskStatus Status => FinishedDate.HasValue ? TaskStatus.Finished : TaskStatus.Open;

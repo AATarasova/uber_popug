@@ -1,7 +1,6 @@
 using Auth.Domain.Roles;
 using Auth.Domain.Users;
 using Auth.Domain.Users.Management;
-using EventManager.Domain.Producer;
 using JetBrains.Annotations;
 using MediatR;
 

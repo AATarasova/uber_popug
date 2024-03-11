@@ -6,6 +6,7 @@ using EventsManager.Domain;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
+using SchemaRegistry;
 using TaskTracker.Consumer.Users;
 using TaskTracker.DAL;
 using TaskTracker.DAL.Context;
@@ -36,6 +37,7 @@ public class Startup
         serviceCollection.RegisterDomain();
         serviceCollection.RegisterDAL();
         serviceCollection.RegisterEventsDomain(configuration);
+        serviceCollection.AddSchemaRegistry();
         
         serviceCollection.AddHostedService<EventsConsumer>();
     }

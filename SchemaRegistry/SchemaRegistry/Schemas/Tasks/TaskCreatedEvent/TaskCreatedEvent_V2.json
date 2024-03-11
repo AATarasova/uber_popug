@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "TaskCreatedEvent",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "TaskId": {
+      "type": "string",
+      "format": "guid"
+    },
+    "JiraId": {
+      "type": "string"
+    },
+    "Title": {
+      "type": "string"
+    },
+    "EventMeta": {
+      "$ref": "#/definitions/EventMeta"
+    }
+  },
+  "definitions": {
+    "EventMeta": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Version": {
+          "$ref": "#/definitions/TaskCreatedEventVersion"
+        }
+      }
+    },
+    "TaskCreatedEventVersion": {
+      "type": "string",
+      "description": "",
+      "x-enumNames": [
+        "V1",
+        "V2"
+      ],
+      "enum": [
+        "V1",
+        "V2"
+      ]
+    }
+  }
+}

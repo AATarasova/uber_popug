@@ -40,6 +40,7 @@ internal class TasksRepository(TaskTrackerDbContext dbContext) : ITasksRepositor
         {
             DeveloperId = dto.DeveloperId.Value,
             Description = dto.Description,
+            Title = dto.Title
         };
         await dbContext.AddAsync(task);
         await dbContext.SaveChangesAsync();
@@ -57,7 +58,8 @@ internal class TasksRepository(TaskTrackerDbContext dbContext) : ITasksRepositor
     public async Task Update(IReadOnlyCollection<TaskManagementDto> updates)
     {
         var dict = updates.ToDictionary(u => u.Id.Value);
-        foreach (var task in dbContext.Tasks.Where(t => dict.ContainsKey(t.Id)))
+        var tasks = await dbContext.Tasks.ToListAsync();
+        foreach (var task in tasks.Where(t => dict.ContainsKey(t.Id)))
         {    
             SetFields(task, dict[task.Id]);
         }
@@ -69,6 +71,10 @@ internal class TasksRepository(TaskTrackerDbContext dbContext) : ITasksRepositor
         if (updateDto.Description is not null)
         {
             task.Description = updateDto.Description;
+        }
+        if (updateDto.Title is not null)
+        {
+            task.Description = updateDto.Title;
         }
 
         if (updateDto.DeveloperId.HasValue)
@@ -87,6 +93,7 @@ internal class TasksRepository(TaskTrackerDbContext dbContext) : ITasksRepositor
             Id = new TaskId(task.Id),
             PublicId = task.PublicId,
             Description = task.Description,
+            Title = task.JiraId != null ? $"[{task.JiraId}] - {task.Title}" : task.Title,
             CreatedDate = task.CreatedDate,
             FinishedDate = task.FinishedDate
         };

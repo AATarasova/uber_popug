@@ -2,12 +2,14 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Dashboard.AccessRights;
 using Dashboard.Consumer;
 using Dashboard.DAL;
 using Dashboard.DAL.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
+using SchemaRegistry;
 
 namespace Dashboard;
 
@@ -31,8 +33,13 @@ public class Startup
         });
         
         serviceCollection.AddDbContext<DashboardDbContext>();
+        serviceCollection.AddSchemaRegistry();
         serviceCollection.RegisterDAL();
-        serviceCollection.AddScoped<IEventConsumer>(p => new EventConsumer(configuration["Kafka:BootstrapServers"] ?? throw new InvalidOperationException()));
+        serviceCollection
+            .AddScoped<IEventConsumer>(p => new EventConsumer(configuration["Kafka:BootstrapServers"] ?? throw new InvalidOperationException()))
+            .AddTransient<AccessRightsManager>();
+        
+        serviceCollection.AddHostedService<ConsumerBackgroundService>();
     }
 
     public void ConfigureAuth(IServiceCollection serviceCollection, ConfigurationManager configuration)

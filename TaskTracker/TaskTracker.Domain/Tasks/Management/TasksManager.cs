@@ -2,10 +2,12 @@ using System.Collections.Immutable;
 using TaskTracker.Domain.Employees;
 using TaskTracker.Domain.Tasks.Dto;
 using EventsManager.Domain.Producer;
+using SchemaRegistry.Schemas.Tasks.TaskCreatedEvent;
+using SchemaRegistry.Schemas.Tasks.TaskStatusChangedEvent;
 
 namespace TaskTracker.Domain.Tasks.Management;
 
-internal class TasksManager(ITasksRepository repository, IEmployeesManager employeesManager, IEventProducer producer)
+internal class TasksManager(ITasksRepository repository, IEmployeesManager employeesManager, IEventProducer producer, EventsFactory taskEventsFactory)
     : ITasksManager
 {
     private readonly Random _rnd = new();
@@ -17,7 +19,7 @@ internal class TasksManager(ITasksRepository repository, IEmployeesManager emplo
 
     public async Task Close(TaskId id)
     {
-        var editDto = new TaskManagementDto()
+        var editDto = new TaskManagementDto
         {
             Id = id,
             IsClosed = true
@@ -25,27 +27,27 @@ internal class TasksManager(ITasksRepository repository, IEmployeesManager emplo
         await repository.Update(editDto);
 
         var task = await repository.GetById(id);
-        await producer.Produce("task-workflow", TaskStatus.Closed.ToString(), new TaskStatusChangedEvent
-        {
-            TaskId = task.PublicId,
-            DeveloperId = task.DeveloperId.Value,
-            Status = TaskStatus.Closed
-        });
+        var @event = await taskEventsFactory.CreateTaskStatusChangedEvent(task.PublicId, task.DeveloperId.Value,
+            ChangedTaskType.Closed);
+        await producer.Produce("task-workflow", ChangedTaskType.Closed.ToString(), @event);
     }
 
-    public async Task Create(string description)
+    public async Task Create(string jiraId, string title, string description)
     {
         var dto = new CreateTaskDto()
         {
+            Title = title,
             Description = description,
             DeveloperId = await GetDeveloperForTask()
         };
         var id = await repository.Create(dto);
         var task = await repository.GetById(id);
-        await producer.Produce("tasks-streaming", "Created", new TaskCreatedEvent()
-        {
-            TaskId = task.PublicId,
-        });
+
+        var eventV1 = await taskEventsFactory.CreateTaskCreatedEvent(task.PublicId, task.Title);
+        var eventV2 = await taskEventsFactory.CreateTaskCreatedEvent(task.PublicId, task.Title);
+        
+        await producer.Produce("task-streaming", TaskCreatedEventVersion.V1.ToString(), eventV1);
+        await producer.Produce("task-streaming", TaskCreatedEventVersion.V2.ToString(), eventV2);
     }
 
     public async Task Reassign()
@@ -55,18 +57,17 @@ internal class TasksManager(ITasksRepository repository, IEmployeesManager emplo
 
         await repository.Update(openTasks.Select(t => new TaskManagementDto()
         {
+            Id = t.Id,
             DeveloperId = GetDeveloperForTask(developers)
         }).ToArray());
         
-        // TODO: add batching
+        // TODO: add batching, add 2 types of events supporting
         foreach (var task in await repository.ListOpen())
         {
-            await producer.Produce("task-workflow", TaskStatus.Reassigned.ToString(), new TaskStatusChangedEvent
-            {
-                TaskId = task.PublicId,
-                DeveloperId = task.DeveloperId.Value,
-                Status = TaskStatus.Reassigned
-            });
+            var @event = await taskEventsFactory.CreateTaskStatusChangedEvent(task.PublicId, task.DeveloperId.Value,
+                ChangedTaskType.Reassigned);
+            await producer.Produce("task-workflow",
+                ChangedTaskType.Reassigned.ToString(), @event);
         }
     }
 

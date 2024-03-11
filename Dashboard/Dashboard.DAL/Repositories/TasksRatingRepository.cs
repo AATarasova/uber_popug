@@ -11,7 +11,7 @@ public class TasksRatingRepository(DashboardDbContext dbContext) : ITasksRatingR
     {
         await dbContext.TasksRating.AddAsync(new Entity
         {
-            Cost = historyItem.Cost,
+            Cost = historyItem.MaxCost,
             TaskId = historyItem.TaskId,
             Date = historyItem.Date
         });
@@ -22,7 +22,7 @@ public class TasksRatingRepository(DashboardDbContext dbContext) : ITasksRatingR
         var items = dbContext.TasksRating.Where(e => e.Date >= startDate && e.Date <= finishDate);
         var rating = items.Select(i => new TasksRatingHistoryItem
             {
-                Cost = i.Cost,
+                MaxCost = i.Cost,
                 Date = i.Date,
                 TaskId = i.TaskId
             })
